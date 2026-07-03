@@ -1,0 +1,5589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yashas Vaddi — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      --surface-base: #ffffff;
+      --surface-mid: #f5f5f7;
+      --surface-deep: #e8e8ed;
+      --surface-raised: #ffffff;
+      --surface-dark: #f2f2f7;
+      --grain-highlight: rgba(255, 255, 255, 0.0);
+      --grain-shadow: rgba(0, 0, 0, 0.0);
+      --accent: #0a84ff;
+      --accent-dark: #0060d0;
+      --accent-strong: #1a9eff;
+      --accent-glow: rgba(10, 132, 255, 0.1);
+      --text-primary: #1c1c1e;
+      --text-secondary: #48484a;
+      --text-tertiary: #8e8e93;
+      --text-on-dark: #1c1c1e;
+      --text-on-dark-dim: #8e8e93;
+      --border-light: rgba(0, 0, 0, 0.04);
+      --border-shadow: rgba(0, 0, 0, 0.08);
+      --border-mid: rgba(0, 0, 0, 0.06);
+      --shadow-raised: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-pressed: none;
+      --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+      --shadow-deep-inset: none;
+      --text-hero: 110px;
+      --text-display: 48px;
+      --text-title: 28px;
+      --text-lg: 20px;
+      --text-base: 16px;
+      --text-sm: 14px;
+      --text-xs: 12px;
+      --text-label: 11px;
+      --surface-bright: #ffffff;
+      --accent-danger: #ff3b30;
+      --surface-glow: rgba(10, 132, 255, 0.06);
+      --award-start: #ffd60a;
+      --award-end: #ff9f0a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--surface-base);
+      color: var(--text-primary);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'DM Sans', Inter, system-ui, -apple-system, sans-serif;
+      background-color: #ffffff;
+      background-image: none;
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    body.reduced-motion *,
+    body.reduced-motion *::before,
+    body.reduced-motion *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .snap-container {
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-padding-top: 0;
+      background: transparent;
+    }
+
+    section {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      padding: 160px 48px 96px;
+      position: relative;
+    }
+
+    .site-shell {
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+
+    .site-shell.is-ready {
+      opacity: 1;
+    }
+
+    .panel {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      transform-origin: center;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: none;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .panel>* {
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 980px;
+      padding: 14px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(10, 132, 255, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-primary:active,
+    .btn-secondary:active,
+    .chat-toggle:active,
+    .small-action:active,
+    .send-btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--accent);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .btn-secondary:active {
+      box-shadow: none;
+    }
+
+    .display-inset {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: var(--surface-dark);
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      box-shadow: none;
+    }
+
+    .display-inset::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: none;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .display-inset .typed-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .display-inset .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--text-primary);
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 530ms step-end infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .tag {
+      background: linear-gradient(180deg, var(--surface-raised) 0%, var(--surface-mid) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+      border-radius: 980px;
+      padding: 4px 12px;
+      font-size: var(--text-xs);
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text-secondary);
+    }
+
+    .label-embossed {
+      font-size: var(--text-label);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .section-eyebrow {
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-size: var(--text-title);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 24px;
+      line-height: 1.1;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 380ms ease, transform 380ms ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    header,
+    nav,
+    .top-nav {
+      background: rgba(255, 255, 255, 0.8) !important;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.0);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 52px;
+      z-index: 900;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: none;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 250ms ease, transform 250ms ease;
+    }
+
+    .top-nav.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1C1C1E;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      user-select: none;
+      padding: 0;
+      text-decoration: none;
+    }
+
+    .logo-badge svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+
+    .logo-badge:active {
+      transform: scale(0.96);
+    }
+
+    .btn-nav-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 99px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #111111;
+      color: #ffffff !important;
+      border: none;
+      transition: background 150ms ease, transform 80ms ease;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-nav-download svg {
+      margin-left: 2px;
+    }
+
+    .btn-nav-download:hover {
+      background: #2a2a2a;
+    }
+
+    .btn-nav-download:active {
+      transform: scale(0.97);
+    }
+
+    @media (max-width: 768px) {
+      .btn-nav-download {
+        display: none;
+      }
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: color 120ms ease;
+      position: relative;
+      padding-bottom: 6px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.is-active {
+      color: var(--text-primary);
+    }
+
+    .nav-links a.is-active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 999px;
+    }
+
+    .mobile-toggle {
+      display: none;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .mobile-toggle span {
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background: var(--text-primary);
+      margin: 4px auto;
+      border-radius: 999px;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: linear-gradient(180deg, var(--surface-raised) 0%, var(--surface-mid) 100%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 24px;
+    }
+
+    .mobile-menu a {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mobile-menu.is-open {
+      display: flex;
+    }
+
+    .side-dots {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 800;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
+
+    .side-dots.is-visible {
+      opacity: 1;
+    }
+
+    .side-dot {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--surface-deep);
+      cursor: pointer;
+      position: relative;
+      transition: all 150ms ease;
+    }
+
+    .side-dot.active {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+    }
+
+    .side-dot:hover:not(.active) {
+      background: var(--text-tertiary);
+    }
+
+    .side-dot-label {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--surface-raised);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: var(--shadow-raised);
+      font-size: var(--text-label);
+      color: var(--text-secondary);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 120ms ease;
+    }
+
+    .side-dot:hover .side-dot-label {
+      opacity: 1;
+    }
+
+    #intro {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      pointer-events: all;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .intro-half {
+      width: 100%;
+      height: 50vh;
+      background: #ffffff;
+      flex-shrink: 0;
+      transition: transform 600ms cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    .intro-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 16px;
+    }
+
+    .intro-bottom {
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .intro-content {
+      text-align: center;
+    }
+
+    .intro-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 92px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #1C1C1E;
+      margin: 0;
+      opacity: 0;
+      transition: opacity 500ms ease-out;
+    }
+
+    .intro-tagline {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #8E8E93;
+      margin: 12px 0 0 0;
+      opacity: 0;
+      transition: opacity 400ms ease-out;
+    }
+
+    .intro-top.split {
+      transform: translateY(-100%);
+    }
+
+    .intro-bottom.split {
+      transform: translateY(100%);
+    }
+
+    #intro.done {
+      display: none;
+    }
+
+    /* Mouse-reactive dot/dash terrain background */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      display: block;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* Make main content render above the canvas */
+    .site-shell {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Hero pop enhancements */
+    .hero-name {
+      text-shadow: 0 6px 18px rgba(10, 132, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+      transform-origin: center;
+    }
+
+    .hero-name.pop {
+      animation: hero-pop 520ms cubic-bezier(.2, .9, .2, 1);
+    }
+
+    @keyframes hero-pop {
+      0% {
+        transform: scale(0.96) translateY(6px);
+        filter: blur(0.6px);
+        opacity: 0.0;
+      }
+
+      40% {
+        transform: scale(1.06) translateY(-4px);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        filter: none;
+      }
+    }
+
+    /* Tour modal + sidebar */
+    .tour-modal {
+      position: fixed;
+      right: 28px;
+      top: 28vh;
+      width: 300px;
+      max-width: calc(100% - 56px);
+      z-index: 11000;
+      display: none;
+      /* hidden until triggered */
+      pointer-events: none;
+    }
+
+    .tour-modal .panel {
+      pointer-events: auto;
+      padding: 20px 22px;
+      width: 100%;
+      text-align: center;
+      border-radius: 12px;
+    }
+
+    .tour-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .tour-sidebar {
+      position: fixed;
+      right: 28px;
+      top: 28vh;
+      width: 300px;
+      max-width: 40vw;
+      z-index: 12000;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 240ms ease, transform 240ms ease;
+    }
+
+    .tour-sidebar.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .tour-sidebar .panel {
+      padding: 14px;
+      border-radius: 10px;
+    }
+
+    .hero {
+      display: grid;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+      padding-top: min(20vh, 160px);
+    }
+
+    .hero-content {
+      width: min(900px, 100%);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 350ms ease, transform 350ms ease;
+    }
+
+    .hero-eyebrow.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .eyebrow-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 99px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+      font-size: 13px;
+      font-weight: 500;
+      color: #1c1c1e;
+    }
+
+    .eyebrow-badge svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    .hero-name {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(48px, 8.5vw, 102px);
+      font-weight: 550;
+      letter-spacing: -0.02em;
+      color: #1c1c1e;
+      line-height: 1.05;
+      margin: 0 auto 36px;
+      max-width: 960px;
+      opacity: 0;
+      transform: translateY(28px) scale(0.98);
+      transition: opacity 380ms cubic-bezier(.2, .9, .2, 1), transform 380ms cubic-bezier(.2, .9, .2, 1);
+    }
+
+    .hero-name.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-role {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: auto;
+      padding: 0;
+      margin: 0 auto 32px;
+      font-size: 15px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 350ms ease, transform 350ms ease;
+    }
+
+    .hero-role.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-role .typed-text {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .hero-role .cursor {
+      background: var(--text-secondary);
+    }
+
+    .hero-bio {
+      max-width: 580px;
+      margin: 0 auto 36px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
+
+    .hero-bio.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
+
+    .hero-actions.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .btn-primary-black {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 99px;
+      padding: 16px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      background: #111111;
+      color: #ffffff !important;
+      border: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: background 150ms ease, transform 80ms ease;
+      cursor: pointer;
+      text-decoration: none;
+      box-sizing: border-box;
+      height: 52px;
+    }
+
+    .btn-primary-black:hover {
+      background: #2a2a2a;
+    }
+
+    .btn-primary-black:active {
+      transform: scale(0.97);
+    }
+
+    .btn-secondary-light {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 99px;
+      padding: 16px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      background: #f2f2f7;
+      color: #1c1c1e !important;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      transition: background 150ms ease, transform 80ms ease;
+      cursor: pointer;
+      text-decoration: none;
+      box-sizing: border-box;
+      height: 52px;
+    }
+
+    .btn-secondary-light:hover {
+      background: #e8e8ed;
+    }
+
+    .btn-secondary-light:active {
+      transform: scale(0.97);
+    }
+
+    .hero-divider {
+      width: 80px;
+      height: 2px;
+      margin: 0 auto 20px;
+      position: relative;
+      background: transparent;
+    }
+
+    .hero-divider::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-top: 1px solid var(--border-shadow);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .hero-scroll {
+      margin-top: 24px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scroll-arrow {
+      font-size: 16px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── About section layout ── */
+    .about {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      padding: 80px 48px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* The permanent black backdrop that fills the section */
+    .about-backdrop {
+      position: absolute;
+      inset: 12px 20px;
+      background: #0a0a0a;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
+      z-index: 0;
+      /* Animation start state: small pill at bottom-center */
+      transform-origin: center bottom;
+      transform: scaleX(0.15) scaleY(0.08) translateY(60%);
+      opacity: 0;
+      transition: none;
+    }
+
+    /* Phase 1: backdrop rises — add .about-phase-rise */
+    .about.about-phase-rise .about-backdrop {
+      transform: scaleX(0.15) scaleY(0.08) translateY(0);
+      opacity: 1;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+    }
+
+    /* Phase 2: backdrop expands to full — add .about-phase-expand */
+    .about.about-phase-expand .about-backdrop {
+      transform: scaleX(1) scaleY(1) translateY(0);
+      opacity: 1;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+    }
+
+    /* Phase 3+ keep it expanded */
+    .about.about-phase-cards .about-backdrop,
+    .about.about-phase-settle .about-backdrop,
+    .about.about-phase-done .about-backdrop {
+      transform: scaleX(1) scaleY(1) translateY(0);
+      opacity: 1;
+    }
+
+    /* Sticky wrapper: flex row, sits on top of backdrop */
+    .about-sticky-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      grid-template-rows: 1fr;
+      gap: 60px;
+      align-items: center;
+      padding: 80px 48px;
+      box-sizing: border-box;
+      min-height: calc(100vh - 160px);
+    }
+
+    /* ── About content (left) ── */
+    .about-content {
+      grid-column: 1;
+      grid-row: 1;
+      /* initial hidden state */
+      opacity: 0;
+      transform: translateX(-28px);
+      transition: none;
+    }
+
+    /* Text colours on dark background */
+    .about-content .label-embossed {
+      color: rgba(255, 255, 255, 0.45) !important;
+      letter-spacing: 0.12em;
+    }
+
+    .about-content .section-title {
+      color: #ffffff !important;
+    }
+
+    .about-content p {
+      font-size: var(--text-base);
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.6) !important;
+      margin: 0 0 16px;
+    }
+
+    .about-content .tag {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: rgba(255, 255, 255, 0.7) !important;
+      border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    /* Phase 5: text slides in */
+    .about.about-phase-settle .about-content,
+    .about.about-phase-done .about-content {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.55s ease 0.1s, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+    }
+
+    /* ── Stats grid (right) ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      grid-column: 2;
+      grid-row: 1;
+      /* initial hidden state — centered large */
+      opacity: 0;
+      transform: translateX(-50%) translateY(-50%) scale(1.2);
+      /* We calculate actual center-offset via JS for the centered phase */
+      transform-origin: center center;
+      transition: none;
+      position: relative;
+    }
+
+    /* Phase 3: cards appear large at center */
+    .about.about-phase-cards .stats-grid {
+      opacity: 1;
+      /* transform set inline by JS */
+    }
+
+    /* Phase 4: cards settle into grid position on right */
+    .about.about-phase-settle .stats-grid,
+    .about.about-phase-done .stats-grid {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+
+    .stat-card {
+      padding: 24px 20px;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.06) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: none !important;
+      border-radius: 16px !important;
+    }
+
+    .stat-value {
+      font-size: var(--text-display);
+      font-weight: 700;
+      line-height: 1;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .label-embossed {
+      color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    .about-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    /* Override .reveal inside about so we handle visibility ourselves */
+    .about .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .experience {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .experience-shell {
+      width: min(760px, 100%);
+      position: relative;
+    }
+
+    /* Gradient spine: bright/saturated at top (recent), fades out at bottom */
+    /* Gradient spine segments: z-index 1 (sits fully behind cards and dots) */
+    .timeline-line-segment {
+      position: absolute;
+      left: 16px;
+      top: 35px;
+      bottom: -57px;
+      width: 2px;
+      background: linear-gradient(to bottom,
+          var(--accent) 0%,
+          rgba(10, 132, 255, 0.45) 100%);
+      z-index: 1;
+      transform-origin: top;
+      transform: scaleY(0);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .timeline-entry:last-of-type .timeline-line-segment {
+      bottom: -40px;
+      background: linear-gradient(to bottom,
+          rgba(10, 132, 255, 0.45) 0%,
+          rgba(0, 0, 0, 0.05) 100%);
+    }
+
+    .timeline-entry.anim-line .timeline-line-segment {
+      transform: scaleY(1);
+    }
+
+    /* Per-entry reveal: container layout */
+    .timeline-entry {
+      position: relative;
+      padding-left: 54px;
+      margin-bottom: 22px;
+    }
+
+    /* Base dot: z-index 2 (on top of line, below/equal to card) */
+    .timeline-dot {
+      position: absolute;
+      left: 10px;
+      top: 28px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+      border: none;
+      z-index: 2;
+      /* Animation start state: scale 0 */
+      transform: scale(0);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    }
+
+    .timeline-entry.anim-dot .timeline-dot {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    /* Pulsing glow on the current entry dot */
+    .timeline-entry.is-current .timeline-dot {
+      animation: dot-pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes dot-pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.18), 0 0 0 0 rgba(10, 132, 255, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.18), 0 0 14px 6px rgba(10, 132, 255, 0.22);
+      }
+    }
+
+    /* Past entries: dimmer dot, no pulse */
+    .timeline-entry:not(.is-current) .timeline-dot {
+      background: rgba(10, 132, 255, 0.50);
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.08);
+    }
+
+    /* Base exp-card: z-index 2 (fully on top of line), elevated shadow + transitions */
+    .exp-card {
+      padding: 24px 24px 24px 26px;
+      position: relative;
+      z-index: 2;
+      /* Animation start state: scale 0.92 + translation */
+      opacity: 0;
+      transform: scale(0.92) translateX(-18px);
+      transform-origin: left center;
+      transition: background 180ms ease, box-shadow 220ms ease,
+        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+    }
+
+    .timeline-entry.anim-card .exp-card {
+      opacity: 1;
+      transform: scale(1) translateX(0);
+      /* After entrance finishes, use snappy hover timing */
+      transition: background 180ms ease, box-shadow 220ms ease,
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+    }
+
+    /* Default white card elevation for ALL cards (reverted dark styling) */
+    .timeline-entry .exp-card.panel {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.08), 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Hover: raise + subtle scale + deeper shadow for ALL cards */
+    .timeline-entry .exp-card.panel:hover {
+      transform: translateY(-5px) scale(1.012);
+      background: #f7f7fa;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.13), 0 7px 18px rgba(0, 0, 0, 0.07);
+    }
+
+    /* Upgraded active role text color */
+    .timeline-entry.is-current .exp-role {
+      color: var(--accent-strong);
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .exp-company {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .exp-date {
+      font-family: "JetBrains Mono", monospace;
+      font-size: var(--text-sm);
+      color: var(--text-tertiary);
+    }
+
+    .exp-role {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .exp-location {
+      margin-bottom: 12px;
+    }
+
+    .exp-bullets {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      color: var(--text-secondary);
+    }
+
+    .exp-bullets li {
+      display: flex;
+      gap: 8px;
+      line-height: 1.6;
+      font-size: var(--text-base);
+    }
+
+    .exp-bullets li::before {
+      content: "·";
+      color: var(--text-tertiary);
+    }
+
+    /* ── NOW badge: saturated accent pill with colored glow ── */
+    .current-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      min-height: 28px;
+      padding: 5px 13px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      margin-left: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 980px;
+      box-shadow: 0 3px 10px rgba(10, 132, 255, 0.45), 0 1px 3px rgba(10, 132, 255, 0.3);
+      vertical-align: middle;
+      text-transform: uppercase;
+    }
+
+    .projects {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .projects-header {
+      margin-bottom: 16px;
+    }
+
+    .project-rail {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 24px 4px 24px 0;
+      scrollbar-width: none;
+      cursor: grab;
+    }
+
+    .project-rail::-webkit-scrollbar {
+      display: none;
+    }
+
+    .project-rail:active {
+      cursor: grabbing;
+    }
+
+    .project-card {
+      scroll-snap-align: start;
+      flex-shrink: 0;
+      width: 380px;
+      min-height: 380px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: box-shadow 200ms ease, border-color 200ms ease, background-color 200ms ease;
+    }
+
+    .project-card:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    body.reduced-motion .project-card {
+      transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease, background-color 200ms ease;
+    }
+
+    body.reduced-motion .project-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .project-card:hover .tags .tag {
+      border-color: rgba(10, 132, 255, 0.3);
+      background: rgba(10, 132, 255, 0.03);
+    }
+
+    .project-card .tags .tag {
+      transition: border-color 200ms ease, background-color 200ms ease;
+    }
+
+    .project-card .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .project-card p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: var(--text-base);
+      line-height: 1.7;
+    }
+
+    .award-badge {
+      display: inline-flex;
+      width: fit-content;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--award-start), var(--award-end));
+      color: var(--text-primary);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .award-badge::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4) 30%,
+          rgba(255, 255, 255, 0.6) 50%,
+          rgba(255, 255, 255, 0.4) 70%,
+          transparent);
+      transform: translateX(-100%) skewX(-20deg);
+    }
+
+    .award-badge.shimmer-play::after {
+      animation: badge-shimmer 850ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes badge-shimmer {
+      0% {
+        transform: translateX(-100%) skewX(-20deg);
+      }
+
+      100% {
+        transform: translateX(110%) skewX(-20deg);
+      }
+    }
+
+    .project-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
+
+    .drag-hint {
+      margin-top: 8px;
+      color: var(--text-tertiary);
+      font-size: var(--text-sm);
+      opacity: 1;
+      transition: opacity 280ms ease;
+    }
+
+    .drag-hint.is-hidden {
+      opacity: 0;
+    }
+
+    .skills {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .skill-card {
+      padding: 24px;
+    }
+
+    .skill-card .label-embossed {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 6px;
+      width: fit-content;
+      margin-bottom: 16px;
+    }
+
+    .skill-card ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .skill-card li {
+      color: var(--text-primary);
+      font-size: var(--text-base);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .skill-card li::before {
+      content: "–";
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    @media (min-width: 1025px) {
+      .developer-tools-card {
+        grid-column: span 3;
+      }
+
+      .developer-tools-card ul {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .awards {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .award-list {
+      padding: 24px;
+    }
+
+    .award-row {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr) 70px auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      margin: 0 -16px;
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 140ms ease, background-color 140ms ease;
+    }
+
+    .award-row:hover {
+      transform: translateY(-2px);
+      background-color: rgba(0, 0, 0, 0.015);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .award-row:focus-visible {
+      outline: none;
+      background-color: rgba(10, 132, 255, 0.03);
+      box-shadow: 0 0 0 2px var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .award-row+.award-row::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 16px;
+      right: 16px;
+      border-top: 1px solid rgba(0, 0, 0, var(--border-opacity, 0.08));
+      transition: border-color 0.25s ease;
+    }
+
+    .award-row::after {
+      content: none;
+    }
+
+    .award-rank {
+      font-weight: 600;
+      color: var(--text-primary);
+      transform-origin: left center;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), color 0.25s ease;
+    }
+
+    .award-event {
+      color: var(--text-secondary);
+      transition: color 0.25s ease;
+    }
+
+    .award-year {
+      font-family: "JetBrains Mono", monospace;
+      color: var(--text-tertiary);
+      text-align: right;
+      transition: color 0.25s ease;
+    }
+
+    .award-project {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .award-cert-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      color: #ffffff;
+      background-color: var(--accent);
+      box-shadow: 0 2px 5px rgba(10, 132, 255, 0.20);
+      transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 180ms ease, background-color 180ms ease;
+      animation: cert-pulse 3s ease-in-out infinite alternate;
+    }
+
+    /* Continuous color-cycling between blue and silver/gray */
+    @keyframes cert-pulse {
+      0% {
+        background-color: var(--accent);
+        box-shadow: 0 2px 6px rgba(10, 132, 255, 0.25);
+      }
+
+      100% {
+        background-color: #b0b0b8;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+      }
+    }
+
+    /* Pop badge styling when entire row is hovered or focused */
+    .award-row:hover .award-cert-btn,
+    .award-row:focus-visible .award-cert-btn {
+      animation: none;
+      background-color: var(--accent);
+      transform: scale(1.15);
+      box-shadow: 0 0 10px rgba(10, 132, 255, 0.45), 0 2px 5px rgba(10, 132, 255, 0.25);
+    }
+
+    /* ── Hackathon slider (Antigravity-style carousel) ── */
+    .hackathon-slider-container {
+      position: relative;
+      width: auto;
+      margin-top: 12px;
+      margin-left: -48px;
+      margin-right: -48px;
+    }
+
+    .hackathon-slider-viewport {
+      overflow: hidden;
+      width: 100%;
+      position: relative;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    .hackathon-slider-track {
+      display: flex;
+      gap: 20px;
+      transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+      width: 100%;
+    }
+
+    .hackathon-slide {
+      flex: 0 0 78%;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hackathon-image-container {
+      width: 100%;
+      aspect-ratio: 2.2 / 1;
+      border-radius: 16px;
+      background: var(--surface-deep);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      transition: box-shadow 300ms ease, transform 300ms ease;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .hackathon-slide:hover .hackathon-image-container {
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .hackathon-image-container .hackathon-slide-overlay {
+      position: absolute !important;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 24px 24px 24px;
+      z-index: 10 !important;
+      color: #ffffff;
+      font-size: clamp(20px, 4vw, 36px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+      min-height: 1.3em;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.70) 0%, rgba(0, 0, 0, 0.25) 60%, transparent 100%);
+    }
+
+    .hackathon-slide-overlay .typewriter-text {
+      white-space: pre-wrap;
+    }
+
+    .hackathon-slide-overlay .cursor {
+      display: none;
+      width: 3px;
+      height: 1.1em;
+      background-color: currentColor;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    .hackathon-slider-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 18px;
+      gap: 20px;
+      padding: 0;
+      margin-left: 48px;
+      width: calc(78% * (100% - 96px));
+    }
+
+    .hackathon-slider-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hackathon-slider-title {
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .hackathon-slider-desc {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+
+    .hackathon-slider-controls {
+      display: inline-flex;
+      align-items: center;
+      background: var(--surface-mid);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 980px;
+      padding: 4px;
+      gap: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .hackathon-control-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease, opacity 150ms ease;
+    }
+
+    .hackathon-control-btn:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--accent);
+    }
+
+    .hackathon-control-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .contact-copy {
+      max-width: 620px;
+      font-size: var(--text-base);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0 0 24px;
+    }
+
+    .contact-list {
+      width: min(760px, 100%);
+      display: grid;
+      gap: 14px;
+    }
+
+    .contact-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      transition: box-shadow 150ms ease, transform 150ms ease;
+      gap: 16px;
+    }
+
+    .contact-item-label-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .contact-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--surface-mid);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .contact-item-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-secondary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .contact-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 -1px 0 rgba(0, 0, 0, 0.08) inset, 0 10px 28px rgba(0, 0, 0, 0.09), 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .contact-item .contact-value {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: var(--text-sm);
+      color: var(--text-tertiary);
+    }
+
+    /* ── Contact section dot canvas ── */
+    .contact {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    #contactDotsCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 1;
+      transition: opacity 400ms ease;
+    }
+
+    .contact>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .chat-toggle {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      box-shadow: 0 6px 20px rgba(10, 132, 255, 0.25), 0 2px 6px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .chat-toggle:hover {
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .chat-toggle.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .chat-toggle svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: var(--surface-bright);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chat-notification {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-danger);
+      box-shadow: 0 0 0 3px #ffffff;
+    }
+
+    .chat-notification.is-hidden {
+      display: none;
+    }
+
+    .chat-panel {
+      position: fixed;
+      bottom: 96px;
+      right: 28px;
+      width: min(380px, calc(100vw - 32px));
+      height: min(72vh, 520px);
+      min-height: 320px;
+      max-height: 80vh;
+      resize: vertical;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      overflow: auto;
+    }
+
+    .chat-panel.is-open {
+      display: flex;
+      animation: chat-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes chat-pop {
+      0% {
+        transform: scale(0.94) translateY(8px);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .chat-header {
+      height: 48px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .chat-header::after {
+      content: none;
+    }
+
+    .chat-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .chat-meta strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .chat-meta span {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+    }
+
+    .small-action {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-bubble {
+      max-width: 84%;
+      padding: 10px 14px;
+      font-size: var(--text-base);
+      line-height: 1.45;
+      border-radius: 12px 12px 12px 4px;
+      background: #f2f2f7;
+      color: var(--text-primary);
+    }
+
+    .message-row.user .message-bubble {
+      background: var(--accent);
+      color: #ffffff;
+      border-radius: 12px 12px 4px 12px;
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      80%,
+      100% {
+        opacity: 0.35;
+        transform: translateY(0);
+      }
+
+      40% {
+        opacity: 1;
+        transform: translateY(-2px);
+      }
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 12px;
+    }
+
+    .chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      line-height: 1.3;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: border-color 120ms ease, color 120ms ease;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .composer {
+      padding: 12px 12px 14px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .composer::before {
+      content: none;
+    }
+
+    .composer input {
+      flex: 1;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      outline: none;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: var(--surface-dark);
+      color: var(--text-primary);
+    }
+
+    .send-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: var(--surface-bright);
+      box-shadow: 0 2px 8px rgba(10, 132, 255, 0.15);
+      cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+      .about {
+        padding: 60px 20px;
+      }
+
+      .about-backdrop {
+        inset: 24px 16px;
+        border-radius: 20px;
+      }
+
+      .about-sticky-wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        padding: 60px 24px;
+        gap: 40px;
+      }
+
+      .about-content {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .stats-grid {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .skills-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .developer-tools-card {
+        grid-column: span 2;
+      }
+
+      .developer-tools-card ul {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    /* ── Award Badge Container ── */
+    .award-badge-container {
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    /* ── Video Modal ── */
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .video-modal.is-active {
+      display: grid;
+    }
+
+    .video-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: opacity 300ms ease;
+    }
+
+    .video-modal-content {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.1);
+      z-index: 2001;
+      transform: scale(0.95);
+      opacity: 0;
+      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 300ms ease;
+    }
+
+    .video-modal.is-active .video-modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .video-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+      z-index: 2002;
+    }
+
+    .video-modal-close:hover {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--accent);
+      transform: scale(1.05);
+    }
+
+    .video-modal-close:active {
+      transform: scale(0.95);
+    }
+
+    .video-iframe-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      /* 16:9 Aspect Ratio */
+      background: #000000;
+    }
+
+    .video-iframe-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    @media (max-width: 768px) {
+      section {
+        padding: 96px 20px 48px;
+      }
+
+      .snap-container {
+        scroll-snap-type: y proximity;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .top-nav {
+        padding: 0 16px;
+      }
+
+      .side-dots {
+        display: none;
+      }
+
+      .hero-name {
+        font-size: 42px;
+      }
+
+      .hero-role {
+        width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .timeline-line {
+        display: none;
+      }
+
+      .timeline-entry {
+        padding-left: 0;
+      }
+
+      .timeline-dot {
+        display: none;
+      }
+
+      .project-card {
+        width: 280px;
+      }
+
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .developer-tools-card {
+        grid-column: span 1;
+      }
+
+      .developer-tools-card ul {
+        grid-template-columns: 1fr;
+      }
+
+      .award-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .award-year,
+      .award-project {
+        justify-self: start;
+        text-align: left;
+      }
+
+      .hackathon-slider-container {
+        margin-left: -20px;
+        margin-right: -20px;
+      }
+
+      .hackathon-slider-viewport {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .hackathon-slider-footer {
+        margin-left: 20px;
+        width: calc(90% * (100% - 40px));
+      }
+
+      .hackathon-slide {
+        flex: 0 0 90%;
+      }
+
+      .hackathon-image-container {
+        aspect-ratio: 16 / 9;
+      }
+
+      .hackathon-image-container .hackathon-slide-overlay {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        font-size: 20px;
+      }
+
+      .chat-toggle {
+        bottom: 16px;
+        right: 16px;
+      }
+
+      .chat-panel {
+        bottom: 80px;
+        right: 16px;
+        width: calc(100vw - 32px);
+      }
+    }
+
+    /* Responsive stability layer: layout-only overrides, no behavior changes */
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      overflow-wrap: anywhere;
+    }
+
+    .snap-container {
+      height: 100svh;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    section {
+      min-height: 100svh;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    .hero-content,
+    .experience-shell,
+    .contact-list,
+    .contact-copy,
+    .award-list,
+    .skills-grid,
+    .about-sticky-wrapper {
+      max-width: 100%;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-primary-black,
+    .btn-secondary-light,
+    .btn-nav-download,
+    .tag,
+    .chip {
+      max-width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .project-card,
+    .skill-card,
+    .exp-card,
+    .stat-card,
+    .contact-item,
+    .award-row {
+      min-width: 0;
+    }
+
+    .projects,
+    #hackathon-wins {
+      overflow-x: hidden;
+    }
+
+    .project-rail,
+    .hackathon-slider-container,
+    .hackathon-slider-viewport {
+      max-width: 100%;
+      contain: paint;
+    }
+
+    .hackathon-slider-track {
+      max-width: 100%;
+    }
+
+    .project-card p,
+    .exp-bullets li,
+    .about-content p,
+    .contact-copy,
+    .message-bubble,
+    .award-event,
+    .award-rank,
+    .contact-value {
+      overflow-wrap: anywhere;
+    }
+
+    body> :not(canvas):not(#intro):not(.top-nav):not(.mobile-menu):not(.side-dots):not(.site-shell):not(.tour-modal):not(.tour-sidebar):not(.chat-toggle):not(.chat-panel):not(.video-modal):not(script) {
+      display: none !important;
+    }
+
+    @media (max-width: 1180px) {
+      section {
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
+      .nav-links {
+        gap: 20px;
+      }
+
+      .hero-name {
+        font-size: 72px;
+      }
+
+      .about-sticky-wrapper {
+        gap: 40px;
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
+      .project-card {
+        width: 340px;
+      }
+
+      .hackathon-slider-container {
+        margin-left: -32px;
+        margin-right: -32px;
+      }
+
+      .hackathon-slider-viewport {
+        padding-left: 32px;
+        padding-right: 32px;
+      }
+
+      .hackathon-slider-footer {
+        margin-left: 32px;
+        width: calc(82% * (100% - 64px));
+      }
+
+      .hackathon-slide {
+        flex-basis: 82%;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .snap-container {
+        scroll-snap-type: y proximity;
+      }
+
+      section {
+        min-height: auto;
+        padding: 112px 28px 72px;
+      }
+
+      .hero {
+        min-height: 100svh;
+        padding-top: 112px;
+      }
+
+      .hero-name {
+        font-size: 60px;
+        margin-bottom: 28px;
+      }
+
+      .hero-bio {
+        max-width: 640px;
+      }
+
+      .about {
+        min-height: auto;
+        padding: 48px 20px;
+        overflow: visible;
+      }
+
+      .about-sticky-wrapper {
+        min-height: auto;
+        padding: 56px 28px;
+      }
+
+      .stats-grid {
+        transform-origin: center;
+      }
+
+      .stat-card {
+        min-height: 132px;
+      }
+
+      .award-row {
+        grid-template-columns: 92px minmax(0, 1fr) 64px;
+      }
+
+      .award-project {
+        grid-column: 2 / -1;
+        justify-self: start;
+      }
+
+      .tour-modal,
+      .tour-sidebar {
+        top: auto;
+        right: 20px;
+        bottom: 20px;
+        width: min(340px, calc(100vw - 40px));
+        max-width: calc(100vw - 40px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --text-display: 38px;
+        --text-title: 26px;
+        --text-lg: 18px;
+        --text-base: 15px;
+      }
+
+      body {
+        overflow: hidden;
+      }
+
+      .snap-container {
+        height: 100svh;
+        scroll-snap-type: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      section {
+        min-height: auto;
+        padding: 88px 16px 56px;
+        scroll-snap-align: none;
+        overflow-x: hidden;
+      }
+
+      .top-nav {
+        height: 56px;
+      }
+
+      .mobile-menu {
+        min-height: 100svh;
+        overflow-y: auto;
+        padding: 72px 24px 32px;
+      }
+
+      .intro-name {
+        font-size: 44px;
+        line-height: 1.05;
+      }
+
+      .intro-tagline {
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+
+      .hero {
+        min-height: 100svh;
+        padding-top: 96px;
+        padding-bottom: 40px;
+      }
+
+      .hero-name {
+        font-size: 44px;
+        line-height: 1.08;
+        margin-bottom: 22px;
+      }
+
+      .hero-role {
+        display: flex;
+        min-width: 0;
+        margin-bottom: 24px;
+        font-size: 13px;
+      }
+
+      .hero-role .typed-text {
+        overflow-wrap: anywhere;
+      }
+
+      .hero-bio {
+        font-size: 14px;
+        line-height: 1.65;
+        margin-bottom: 28px;
+      }
+
+      .hero-actions {
+        width: 100%;
+        gap: 10px;
+      }
+
+      .hero-actions a {
+        width: 100%;
+        max-width: 320px;
+        min-height: 48px;
+        height: auto;
+        padding: 14px 20px;
+      }
+
+      .hero-scroll {
+        display: none;
+      }
+
+      .about {
+        padding: 24px 0;
+      }
+
+      .about-backdrop {
+        inset: 0;
+        border-radius: 0;
+      }
+
+      .about-sticky-wrapper {
+        padding: 48px 16px;
+        gap: 28px;
+      }
+
+      .stats-grid {
+        gap: 10px;
+        transform: none !important;
+      }
+
+      .stat-card {
+        min-height: 116px;
+        padding: 18px 12px;
+        border-radius: 12px !important;
+      }
+
+      .stat-value {
+        font-size: 34px;
+      }
+
+      .timeline-entry {
+        margin-bottom: 16px;
+      }
+
+      .exp-card {
+        padding: 20px;
+        transform-origin: center;
+      }
+
+      .exp-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .exp-role {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 18px;
+      }
+
+      .current-badge {
+        margin-left: 0;
+      }
+
+      .exp-bullets li {
+        font-size: 14px;
+      }
+
+      .project-rail {
+        gap: 14px;
+        padding: 18px 0 18px;
+      }
+
+      .project-card {
+        width: min(84vw, 320px);
+        min-height: auto;
+        padding: 20px;
+      }
+
+      .skills-grid {
+        gap: 14px;
+      }
+
+      .skill-card {
+        padding: 20px;
+      }
+
+      .award-list {
+        padding: 16px;
+      }
+
+      .award-row {
+        margin: 0;
+        padding: 14px 0;
+      }
+
+      .award-row+.award-row::before {
+        left: 0;
+        right: 0;
+      }
+
+      .award-project {
+        grid-column: auto;
+        flex-wrap: wrap;
+      }
+
+      .hackathon-slider-container {
+        margin-left: -16px;
+        margin-right: -16px;
+      }
+
+      .hackathon-slider-viewport {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hackathon-slide {
+        flex-basis: 88%;
+      }
+
+      .hackathon-image-container {
+        aspect-ratio: 4 / 3;
+        border-radius: 12px;
+      }
+
+      .hackathon-image-container .hackathon-slide-overlay {
+        inset: auto 0 0 0;
+        padding: 44px 16px 16px;
+        font-size: 22px;
+        line-height: 1.15;
+      }
+
+      .hackathon-slider-footer {
+        width: auto;
+        margin: 14px 16px 0;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hackathon-slider-controls {
+        align-self: flex-start;
+      }
+
+      .contact {
+        align-items: stretch;
+        text-align: left;
+      }
+
+      .contact-list {
+        width: 100%;
+      }
+
+      .contact-item {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px;
+      }
+
+      .contact-item-label-group {
+        width: 100%;
+      }
+
+      .contact-item .contact-value {
+        width: 100%;
+        padding-left: 48px;
+      }
+
+      .chat-toggle {
+        width: 52px;
+        height: 52px;
+      }
+
+      .chat-panel {
+        left: 12px;
+        right: 12px;
+        bottom: 76px;
+        width: auto;
+        height: min(70svh, 520px);
+        min-height: 280px;
+        max-height: calc(100svh - 96px);
+        resize: none;
+      }
+
+      .composer {
+        align-items: flex-end;
+      }
+
+      .composer input {
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 420px) {
+      section {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .hero-name {
+        font-size: 38px;
+      }
+
+      .hero-bio {
+        font-size: 13px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        min-height: 96px;
+      }
+
+      .project-card {
+        width: calc(100vw - 40px);
+      }
+
+      .hackathon-slide {
+        flex-basis: 92%;
+      }
+
+      .contact-item .contact-value {
+        padding-left: 0;
+      }
+    }
+
+    .hero-scroll-btn {
+      display: none; /* hidden on desktop */
+      position: fixed;
+      bottom: 88px; /* sits above the chat button */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      z-index: 800;
+      color: var(--text-primary);
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 300ms ease, transform 300ms ease;
+      animation: bounce-hint 2s ease-in-out 2s 3; /* bounces 3 times after 2s delay */
+    }
+
+    @keyframes bounce-hint {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(-6px); }
+    }
+
+    .hero-scroll-btn.is-visible {
+      opacity: 1;
+    }
+
+    .hero-scroll-btn.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero-scroll-btn {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <div id="intro" aria-hidden="true">
+    <div class="intro-half intro-top">
+      <div class="intro-content">
+        <h1 class="intro-name">Yashas Vaddi</h1>
+        <p class="intro-tagline">AI &nbsp;·&nbsp; ML &nbsp;·&nbsp; Systems &nbsp;·&nbsp; Production</p>
+      </div>
+    </div>
+    <div class="intro-half intro-bottom"></div>
+  </div>
+
+  <nav class="top-nav" id="topNav">
+    <a href="#hero" class="logo-badge" aria-label="Home">
+      <span class="logo-text">YV</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#awards">Awards</a>
+      <a href="#hackathon-wins">Hackathon Wins</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button class="btn-nav-download" onclick="startTour()">Website Tour</button>
+      <button class="mobile-toggle" aria-label="Open navigation" id="mobileToggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#awards">Awards</a>
+    <a href="#hackathon-wins">Hackathon Wins</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <div class="side-dots" id="sideDots">
+    <a href="#hero" class="side-dot is-active" data-section="hero"><span class="side-dot-label">Hero</span></a>
+    <a href="#about" class="side-dot" data-section="about"><span class="side-dot-label">About</span></a>
+    <a href="#experience" class="side-dot" data-section="experience"><span class="side-dot-label">Experience</span></a>
+    <a href="#awards" class="side-dot" data-section="awards"><span class="side-dot-label">Awards</span></a>
+    <a href="#hackathon-wins" class="side-dot" data-section="hackathon-wins"><span class="side-dot-label">Hackathon
+        Wins</span></a>
+    <a href="#projects" class="side-dot" data-section="projects"><span class="side-dot-label">Projects</span></a>
+    <a href="#skills" class="side-dot" data-section="skills"><span class="side-dot-label">Skills</span></a>
+    <a href="#contact" class="side-dot" data-section="contact"><span class="side-dot-label">Contact</span></a>
+  </div>
+
+  <main class="site-shell" id="siteShell">
+    <div class="snap-container">
+      <section class="hero" id="hero">
+        <div class="hero-content">
+          <div class="hero-eyebrow reveal" data-delay="0">
+          </div>
+          <h1 class="hero-name reveal" data-delay="1">Yashas Vaddi</h1>
+          <div class="hero-role reveal" data-delay="2">
+            <span class="typed-text" id="typedRole">>_ AI/ML Engineer</span>
+            <span class="cursor" id="cursor"></span>
+          </div>
+          <p class="hero-bio reveal" data-delay="3">
+            I build AI that runs in production — not notebooks. Multi-agent pipelines,
+            RAG systems, and cloud-deployed NLP services that handle real workloads.
+          </p>
+          <div class="hero-actions reveal" data-delay="4">
+            <a href="resume/yashas_vaddi_resume.pdf" class="btn-primary-black">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download Resume</span>
+            </a>
+            <a href="#projects" class="btn-secondary-light">
+              <span>Explore projects</span>
+            </a>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="hero-scroll label-embossed">
+            <span>scroll</span>
+            <span class="scroll-arrow">↓</span>
+          </div>
+          <button class="hero-scroll-btn" id="heroScrollBtn" aria-label="Scroll to About section">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" 
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="about" id="about">
+        <div class="about-sticky-wrapper">
+          <div class="about-backdrop"></div>
+          <div class="stats-grid">
+            <div class="stat-card panel reveal" data-delay="0">
+              <div class="stat-value" data-target="9.01">0</div>
+              <div class="label-embossed">GPA</div>
+            </div>
+            <div class="stat-card panel reveal" data-delay="1">
+              <div class="stat-value" data-target="7">0</div>
+              <div class="label-embossed">Hackathon Podiums</div>
+            </div>
+            <div class="stat-card panel reveal" data-delay="2">
+              <div class="stat-value" data-target="2">0</div>
+              <div class="label-embossed">Published Papers</div>
+            </div>
+            <div class="stat-card panel reveal" data-delay="3">
+              <div class="stat-value" data-target="2">0</div>
+              <div class="label-embossed">Production Deployments</div>
+            </div>
+          </div>
+          <div class="about-content">
+            <div class="section-eyebrow label-embossed reveal" data-delay="0">Recognition</div>
+            <h2 class="section-title reveal" data-delay="1">7 podiums. All under pressure.</h2>
+            <p class="reveal" data-delay="2">
+              Computer Engineering student at TSEC Mumbai (CGPA 9.01), currently building
+              multi-agent clinical AI pipelines at Eka.Care. My work doesn't stop at a
+              working demo — it goes through orchestration, fault tolerance, observability,
+              and GCP deployment.
+            </p>
+
+            <p class="reveal" data-delay="3">
+              At TRREV Technology I shipped a FastAPI service that improved keyword
+              extraction precision by 30–50% in production — not in a controlled eval,
+              in a live system. That gap between "it works on my machine" and "it works
+              under load" is exactly where I operate.
+            </p>
+
+            <p class="reveal" data-delay="4">
+              7 hackathon podiums. 2 published papers. Every project either deployed
+              or competition-tested under pressure. I don't build things I can't ship.
+            </p>
+
+            <div class="about-tags reveal" data-delay="5">
+              <span class="tag">GDG Joint Tech Head</span>
+              <span class="tag">Invited AI/ML Speaker</span>
+              <span class="tag">TSEC Mumbai</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="experience" id="experience">
+        <div class="experience-shell">
+          <div class="section-eyebrow label-embossed reveal" data-delay="0">Experience</div>
+          <h2 class="section-title reveal" data-delay="1">Production, not sandbox.</h2>
+          <div class="timeline-entry is-current">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line-segment"></div>
+            <div class="exp-card panel">
+              <div class="exp-header">
+                <div class="exp-company">Eka.Care</div>
+                <div class="exp-date">2025 — Present</div>
+              </div>
+              <div class="exp-role">Agentic AI Intern <span class="current-badge btn-primary">NOW</span></div>
+              <div class="exp-location label-embossed">Bangalore, India</div>
+              <ul class="exp-bullets">
+                <li>Designing multi-agent clinical pipelines with tool-calling, memory
+                  management, and inter-agent communication layers.</li>
+                <li>Building orchestration infrastructure for reliable LLM execution
+                  under real medical workloads — not synthetic benchmarks.</li>
+                <li>Targeting production GCP deployment with structured fault tolerance,
+                  retries, and observability from day one.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="timeline-entry">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line-segment"></div>
+            <div class="exp-card panel">
+              <div class="exp-header">
+                <div class="exp-company">TRREV Technology</div>
+                <div class="exp-date">2024 — 2025</div>
+              </div>
+              <div class="exp-role">AI/ML Intern</div>
+              <div class="exp-location label-embossed">Mumbai, India</div>
+              <ul class="exp-bullets">
+                <li>Shipped a FastAPI-based NLP service on GCP Compute Engine that
+                  improved keyword extraction precision by 30–50% in a live product.</li>
+                <li>Built and deployed retrieval and data processing pipelines integrated
+                  directly into the production backend — not a separate research track.</li>
+                <li>Owned the full path from model selection to deployment, monitoring
+                  included.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="awards" id="awards">
+        <div class="section-eyebrow label-embossed reveal" data-delay="0">Recognition</div>
+        <h2 class="section-title reveal" data-delay="1">Wins that matter.</h2>
+        <div class="award-list panel reveal" data-delay="2">
+          <a href="https://drive.google.com/file/d/14BAB-sQZmb9IqGFR8p8L-7TplwJ7e7-I/view?usp=drive_link"
+            target="_blank" rel="noopener noreferrer" class="award-row"
+            aria-label="View Certificate for Need for Code 4.0">
+            <div class="award-rank">1st Place</div>
+            <div class="award-event">Need for Code 4.0</div>
+            <div class="award-year">2025</div>
+            <div class="award-project">
+              <span class="tag">DOC.AI</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+          <a href="https://drive.google.com/file/d/1gYgQ610GXbzgErKB8NUf-YrvGRepY4MV/view?usp=sharing" target="_blank"
+            rel="noopener noreferrer" class="award-row" aria-label="View Certificate for Codessiance">
+            <div class="award-rank">1st Place</div>
+            <div class="award-event">Codessiance</div>
+            <div class="award-year">2025</div>
+            <div class="award-project">
+              <span class="tag">SerenMind</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+          <a href="https://drive.google.com/file/d/12em-bQjCuLdtVtqnmrmEM0MVta1XmwJR/view?usp=drive_link"
+            target="_blank" rel="noopener noreferrer" class="award-row" aria-label="View Certificate for Techathon">
+            <div class="award-rank">1st Place</div>
+            <div class="award-event">Techathon</div>
+            <div class="award-year">2025</div>
+            <div class="award-project">
+              <span class="tag">AI Council</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+          <a href="https://drive.google.com/file/d/1Ca2vtZGjcs19FCUOq-mG9tgh1yabaP1J/view?usp=drive_link"
+            target="_blank" rel="noopener noreferrer" class="award-row" aria-label="View Certificate for TSEC Hacks">
+            <div class="award-rank">1st Runner</div>
+            <div class="award-event">TSEC Hacks 2026</div>
+            <div class="award-year">2026</div>
+            <div class="award-project">
+              <span class="tag">ScriptChat</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+          <a href="https://drive.google.com/file/d/1YbjSICt4S_xmMb5lry7VfxRqof8EWwgG/view?usp=sharing" target="_blank"
+            rel="noopener noreferrer" class="award-row" aria-label="View Certificate for HackVision">
+            <div class="award-rank">1st Runner</div>
+            <div class="award-event">HackVision</div>
+            <div class="award-year">2026</div>
+            <div class="award-project">
+              <span class="tag">Agentic LLM Council</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+          <a href="https://drive.google.com/file/d/16pBPuh6zJFMGOXBsSk7gOsJFyCCorkYF/view?usp=drive_link"
+            target="_blank" rel="noopener noreferrer" class="award-row"
+            aria-label="View Certificate for M-INDICATOR National AI Hackathon">
+            <div class="award-rank">2nd Runner</div>
+            <div class="award-event">M-INDICATOR National AI Hackathon</div>
+            <div class="award-year">2026</div>
+            <div class="award-project">
+              <span class="tag">MindVoice</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+          <a href="https://drive.google.com/file/d/1R-_M8eF3rPOQ1BBm0_gfxBVyywwxHWxk/view?usp=drive_link"
+            target="_blank" rel="noopener noreferrer" class="award-row" aria-label="View Certificate for Code Craft 2">
+            <div class="award-rank">Best AIML</div>
+            <div class="award-event">Code Craft 2.0</div>
+            <div class="award-year">2025</div>
+            <div class="award-project">
+              <span class="tag">DOC.AI</span>
+              <span class="award-cert-btn">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="awards" id="hackathon-wins">
+        <div class="section-eyebrow label-embossed reveal" data-delay="0">Hackathon Wins</div>
+        <h2 class="section-title reveal" data-delay="1">Built fast. Judged harder.</h2>
+        <div class="hackathon-slider-container reveal" data-delay="2">
+          <div class="hackathon-slider-viewport">
+            <div class="hackathon-slider-track" id="hackathonTrack">
+              <div class="hackathon-slide" data-index="0" data-name="M-INDICATOR National AI Hackathon"
+                data-title="M-INDICATOR National AI Hackathon · 2026" data-desc="2nd Runner · MindVoice">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hackathon-slide" data-index="1" data-name="Code Craft 2.0" data-title="Code Craft 2 · 2025"
+                data-desc="Best AIML · DOC.AI">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hackathon-slide" data-index="2" data-name="Need for Code 4.0"
+                data-title="Need for Code 4.0 · 2025" data-desc="1st Place · DOC.AI">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hackathon-slide" data-index="3" data-name="Codessiance" data-title="Codessiance · 2025"
+                data-desc="1st Place · SerenMind">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hackathon-slide" data-index="4" data-name="Techathon 2026" data-title="Techathon · 2025"
+                data-desc="1st Place · AI Council">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hackathon-slide" data-index="5" data-name="TSEC Hacks 2026" data-title="TSEC Hacks · 2026"
+                data-desc="1st Runner · ScriptChat">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="hackathon-slide" data-index="6" data-name="HackVision" data-title="HackVision · 2026"
+                data-desc="1st Runner · Agentic LLM Council">
+                <div class="hackathon-image-container panel">
+                  <div class="hackathon-slide-overlay">
+                    <span class="typewriter-text"></span><span class="cursor"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hackathon-slider-footer">
+            <div class="hackathon-slider-info">
+              <div class="hackathon-slider-title" id="hackathonTitle">M-INDICATOR National AI Hackathon · 2026</div>
+              <div class="hackathon-slider-desc" id="hackathonDesc">2nd Runner · MindVoice</div>
+            </div>
+            <div class="hackathon-slider-controls">
+              <button class="hackathon-control-btn btn-prev" id="hackathonPrevBtn" aria-label="Previous slide">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button class="hackathon-control-btn btn-next" id="hackathonNextBtn" aria-label="Next slide">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="projects" id="projects">
+        <div class="projects-header">
+          <div class="section-eyebrow label-embossed reveal" data-delay="0">Projects</div>
+          <h2 class="section-title reveal" data-delay="1">Shipped work.</h2>
+        </div>
+        <div class="project-rail" id="projectRail">
+          <article class="project-card panel reveal" data-delay="2">
+            <h3 class="section-title">DOC.AI</h3>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">RAG</span>
+              <span class="tag">AssemblyAI</span>
+            </div>
+            <p>Production RAG system for PDF and DOCX ingestion. SQL-backed retrieval,
+              multi-document comparison, and AssemblyAI voice interface. Built to handle
+              real document workloads — not a chatbot wrapper.
+            </p>
+            <div class="award-badge-container">
+              <span class="award-badge">1st Place · Need for Code 4.0</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://github.com/Yashasvaddi/DOC.AI/" target="_blank" rel="noopener noreferrer"
+                class="btn-secondary">GitHub →</a>
+              <button type="button" class="btn-primary btn-project-demo" data-video-id="8MGelObxBrU">Demo →</button>
+            </div>
+          </article>
+          <article class="project-card panel reveal" data-delay="3">
+            <h3 class="section-title">MindVoice</h3>
+            <div class="tags">
+              <span class="tag">PyTorch</span>
+              <span class="tag">NLP</span>
+              <span class="tag">Speech</span>
+              <span class="tag">GCP</span>
+            </div>
+            <p>Multimodal AI system combining voice and chat interaction with research-grade
+              evaluation metrics. PyTorch-based, GCP-deployed, built for touch-free
+              accessibility under real usage conditions.
+            </p>
+            <div class="award-badge-container">
+              <span class="award-badge">1st Place · Codessiance</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://github.com/Yashasvaddi/SERENMIND" target="_blank" rel="noopener noreferrer"
+                class="btn-secondary">GitHub →</a>
+              <button type="button" class="btn-primary btn-project-demo" data-video-id="VkV4_lyZzUA">Demo →</button>
+            </div>
+          </article>
+          <article class="project-card panel reveal" data-delay="4">
+            <h3 class="section-title">ScriptChat</h3>
+            <div class="tags">
+              <span class="tag">LangChain</span>
+              <span class="tag">LLM</span>
+              <span class="tag">Vector DB</span>
+              <span class="tag">Docker</span>
+            </div>
+            <p>Agentic document workflow assistant using LangChain and vector retrieval.
+              Structured reasoning over long-form scripts, Dockerized for deployment.
+              Designed for repeatable, production-ready outputs.
+            </p>
+            <div class="award-badge-container">
+              <span class="award-badge">1st Runner · TSEC Hacks</span>
+            </div>
+            <div class="project-actions">
+              <a href="https://github.com/Yashasvaddi/ScriptChat" target="_blank" rel="noopener noreferrer"
+                class="btn-secondary">GitHub →</a>
+              <button type="button" class="btn-primary btn-project-demo" data-video-id="5rkhJy4WTxs">Demo →</button>
+            </div>
+          </article>
+        </div>
+        <div class="drag-hint" id="dragHint">← drag to explore →</div>
+      </section>
+
+      <section class="skills" id="skills">
+        <div class="section-eyebrow label-embossed reveal" data-delay="0">Technical Stack</div>
+        <h2 class="section-title reveal" data-delay="1">What I actually ship with.</h2>
+        <div class="skills-grid">
+          <div class="skill-card panel reveal" data-delay="2">
+            <div class="label-embossed">ML / DL</div>
+            <ul>
+              <li>PyTorch</li>
+              <li>Transformers</li>
+              <li>DistilRoBERTa</li>
+              <li>TensorFlow</li>
+              <li>Scikit-learn</li>
+            </ul>
+          </div>
+          <div class="skill-card panel reveal" data-delay="3">
+            <div class="label-embossed">NLP</div>
+            <ul>
+              <li>RAG Pipelines</li>
+              <li>LLM Orchestration</li>
+              <li>Information Retrieval</li>
+              <li>Embeddings</li>
+              <li>Sentiment Analysis</li>
+            </ul>
+          </div>
+          <div class="skill-card panel reveal" data-delay="4">
+            <div class="label-embossed">Backend</div>
+            <ul>
+              <li>FastAPI</li>
+              <li>REST APIs</li>
+              <li>Service Design</li>
+              <li>Asynchronous Services</li>
+              <li>TCP/IP Fundamentals</li>
+              <li>Linux/OS Basics</li>
+            </ul>
+          </div>
+          <div class="skill-card panel reveal" data-delay="5">
+            <div class="label-embossed">Cloud / MLOps</div>
+            <ul>
+              <li>GCP Compute</li>
+              <li>Docker</li>
+              <li>Monitoring</li>
+              <li>AWS (EC2, S3, Lambda, IAM)</li>
+              <li>CI/CD Pipelines</li>
+            </ul>
+          </div>
+          <div class="skill-card panel reveal" data-delay="6">
+            <div class="label-embossed">Languages</div>
+            <ul>
+              <li>Python</li>
+              <li>C++</li>
+              <li>SQL</li>
+              <li>JavaScript</li>
+            </ul>
+          </div>
+          <div class="skill-card panel reveal" data-delay="7">
+            <div class="label-embossed">Data</div>
+            <ul>
+              <li>Vector Search</li>
+              <li>ETL Workflows</li>
+              <li>Experimentation</li>
+              <li>Pandas</li>
+              <li>NumPy</li>
+              <li>Feature Engineering</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <canvas id="contactDotsCanvas" aria-hidden="true"></canvas>
+        <div class="section-eyebrow label-embossed reveal" data-delay="0">Contact</div>
+        <h2 class="section-title reveal" data-delay="1">If you're building something real, let's talk.</h2>
+        <p class="contact-copy reveal" data-delay="2">
+          Open to internships, research roles, and founding engineer conversations.
+          I respond fast. If you've read this far, you already know I ship.
+        </p>
+        <div class="contact-list">
+          <a class="contact-item panel reveal" data-delay="3" href="mailto:yashas.vaddi12@gmail.com">
+            <div class="contact-item-label-group">
+              <div class="contact-item-icon">
+                <svg viewBox="0 0 24 24">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <polyline points="2,4 12,13 22,4" />
+                </svg>
+              </div>
+              <div class="label-embossed">Email</div>
+            </div>
+            <div class="contact-value">yashas.vaddi12@gmail.com</div>
+          </a>
+          <a class="contact-item panel reveal" data-delay="4" href="https://github.com/Yashasvaddi" target="_blank"
+            rel="noopener noreferrer">
+            <div class="contact-item-label-group">
+              <div class="contact-item-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                </svg>
+              </div>
+              <div class="label-embossed">GitHub</div>
+            </div>
+            <div class="contact-value">github.com/Yashasvaddi</div>
+          </a>
+          <a class="contact-item panel reveal" data-delay="5" href="https://www.linkedin.com/in/yashasvaddi/"
+            target="_blank" rel="noopener noreferrer">
+            <div class="contact-item-label-group">
+              <div class="contact-item-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect x="2" y="9" width="4" height="12" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </div>
+              <div class="label-embossed">LinkedIn</div>
+            </div>
+            <div class="contact-value">linkedin.com/in/yashasvaddi</div>
+          </a>
+        </div>
+        <div class="footer">&copy; 2026 Yashas Vaddi</div>
+      </section>
+    </div>
+  </main>
+
+  <div class="tour-modal" id="tourModal" aria-hidden="true">
+    <div class="panel">
+      <div style="font-weight:700; font-size:18px;">Quick tour?</div>
+      <div style="margin-top:8px; color:var(--text-secondary);">Would you like a short guided tour of this site?</div>
+      <div class="tour-actions">
+        <button class="btn-primary" id="tourYes">Yes, take me</button>
+        <button class="btn-secondary" id="tourNo">No thanks</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tour-sidebar" id="tourSidebar" aria-hidden="true"></div>
+
+  <button class="chat-toggle" id="chatToggle" aria-label="Open chat" type="button">
+    <span class="chat-notification" id="chatNotification"></span>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 7h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3V9a2 2 0 0 1 2-2Z"></path>
+    </svg>
+  </button>
+
+  <div class="chat-panel panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-user">
+        <div class="avatar panel">YV</div>
+        <div class="chat-meta">
+          <strong>Yashas Vaddi</strong>
+          <span>AI Systems Operator</span>
+        </div>
+      </div>
+      <button class="small-action" id="chatClose" type="button" aria-label="Close chat">—</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="suggestions" id="suggestions"></div>
+    <div class="composer">
+      <input id="chatInput" type="text" placeholder="Ask something..." />
+      <button class="send-btn" id="sendBtn" type="button" aria-label="Send">→</button>
+    </div>
+  </div>
+
+  <script>
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const body = document.body;
+    body.classList.toggle('reduced-motion', reduceMotion);
+    const siteShell = document.getElementById('siteShell');
+    const intro = document.getElementById('intro');
+    const introName = document.querySelector('.intro-name');
+    const introTagline = document.querySelector('.intro-tagline');
+    const introTop = document.querySelector('.intro-top');
+    const introBottom = document.querySelector('.intro-bottom');
+    const topNav = document.getElementById('topNav');
+    const heroEyebrow = document.querySelector('.hero-eyebrow');
+    const heroName = document.querySelector('.hero-name');
+    const heroRole = document.querySelector('.hero-role');
+    const heroBio = document.querySelector('.hero-bio');
+    const heroActions = document.querySelector('.hero-actions');
+    const sideDots = document.getElementById('sideDots');
+    const chatToggle = document.getElementById('chatToggle');
+    const chatPanel = document.getElementById('chatPanel');
+    const chatNotification = document.getElementById('chatNotification');
+    const chatClose = document.getElementById('chatClose');
+    const chatMessages = document.getElementById('chatMessages');
+    const suggestions = document.getElementById('suggestions');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const mobileToggle = document.getElementById('mobileToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const projectRail = document.getElementById('projectRail');
+    const dragHint = document.getElementById('dragHint');
+    const typedRole = document.getElementById('typedRole');
+    const cursor = document.getElementById('cursor');
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('.nav-links a'));
+    const mobileLinks = Array.from(document.querySelectorAll('.mobile-menu a'));
+    const dotLinks = Array.from(document.querySelectorAll('.side-dot'));
+
+    const roles = [
+      'AI/ML Engineer',
+      'LLM Systems Engineer',
+      'Backend Infrastructure Engineer',
+      'Research Engineer',
+      'Cloud Architect'
+    ];
+    let roleIndex = 0;
+    let roleTick;
+    let roleVisible = false;
+    let cursorVisible = true;
+
+    const botResponses = {
+      "hi": "Hey there! I'm Yashas's quick portfolio bot. Ask a question or pick a suggestion below.",
+      "hello": "Hello! I'm here to share a quick overview of Yashas's work and experience.",
+      "hey": "Hey 👋 Nice to meet you! Ask me about Yashas's projects, skills, or internship.",
+      "good morning": "Good morning! Ask me anything about Yashas's portfolio, experience, or contact info.",
+      "good afternoon": "Good afternoon! How can I help you learn more about Yashas?",
+      "good evening": "Good evening! I'm here to help with portfolio info or quick career details.",
+      "thank you": "You're welcome! If you'd like, ask another question or browse the site.",
+      "thanks": "You're welcome! Feel free to ask another question or explore the sections.",
+      "what are you currently working on": "Right now I'm interning at Eka.Care in Bangalore, building multi-agent AI pipelines for clinical workflows. I'm designing the agent orchestration layer — tool-calling, memory management, inter-agent communication — all targeting GCP deployment with fault tolerance.",
+      "what's your strongest project": "Probably DOC.AI. It's a production RAG system that handles PDF and DOCX files with SQL-backed retrieval, multi-document comparison, and a voice interface via AssemblyAI. It won 1st place at Need for Code 4.0. The architecture is what I'm most proud of — not just a wrapper around an API.",
+      "what tech stack do you know best": "Python, FastAPI, Docker, and GCP are where I'm most production-ready. On the AI side — RAG pipelines, LLM orchestration, and NLP (PyTorch, DistilRoBERTa, LangChain). I've deployed real services on GCP Compute Engine, not just Colab notebooks.",
+      "are you open to full-time roles": "I'm currently interning and finishing my B.E. (graduating May 2027). I'm open to conversations about roles starting mid-2027 or strong internship opportunities right now. Reach me at yashas.vaddi12@gmail.com.",
+      "tell me about your research": "I've published two papers — one in JETIR (2024) on AI in smart education environments, and one in IJTE on a low-cost multimodal AI system for touch-free interaction using gestures and voice/chat AI. Both are peer-reviewed.",
+      "what's your cgpa": "9.01 CGPA, which puts me in the top 5% of my class at TSEC Mumbai. That's the average through my 5th semester in Computer Engineering.",
+      default: "I'm a rule-based bot, so I work best with the suggested questions. For anything else, reach out directly — yashas.vaddi12@gmail.com."
+    };
+
+    const hackathonImages = {
+      0: "images/mindicator.jpeg",  // M-INDICATOR National AI Hackathon
+      1: "images/devhacks.jpeg",    // Code Craft 2
+      2: "images/nfc.jpeg",         // Need for Code 4.0
+      3: "images/codessiance.jpeg", // Codessiance
+      4: "images/techathon.jpeg",   // Techathon
+      5: "images/tsechacks.jpeg",   // TSEC Hacks
+      6: "images/hackvision.jpeg",  // HackVision
+    };
+
+    const suggestionPool = [
+      'What are you currently working on?',
+      "What's your strongest project?",
+      'What tech stack do you know best?',
+      'Are you open to full-time roles?',
+      'Tell me about your research.',
+      "What's your CGPA?"
+    ];
+    let chipIndex = 0;
+    let suggestionsOrder = [...suggestionPool].sort(() => Math.random() - 0.5);
+    let startupMessageShown = false;
+
+    function normalize(text) {
+      return text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    }
+
+    function renderSuggestions() {
+      const slice = suggestionsOrder.slice(chipIndex, chipIndex + 1);
+      suggestions.innerHTML = '';
+      slice.forEach((text) => {
+        const button = document.createElement('button');
+        button.className = 'chip';
+        button.type = 'button';
+        button.textContent = text;
+        button.addEventListener('click', () => handleUserMessage(text));
+        suggestions.appendChild(button);
+      });
+    }
+
+    function advanceSuggestions() {
+      if (chipIndex + 1 >= suggestionsOrder.length) {
+        suggestionsOrder = [...suggestionPool].sort(() => Math.random() - 0.5);
+        chipIndex = 0;
+      } else {
+        chipIndex += 1;
+      }
+      renderSuggestions();
+    }
+
+    function addMessage(text, isUser) {
+      const row = document.createElement('div');
+      row.className = `message-row${isUser ? ' user' : ''}`;
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      bubble.textContent = text;
+      row.appendChild(bubble);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTyping() {
+      const row = document.createElement('div');
+      row.className = 'message-row';
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble';
+      const dots = document.createElement('div');
+      dots.className = 'typing-dots';
+      for (let i = 0; i < 3; i += 1) {
+        const dot = document.createElement('span');
+        dot.className = 'typing-dot';
+        dots.appendChild(dot);
+      }
+      bubble.appendChild(dots);
+      row.appendChild(bubble);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return row;
+    }
+
+    function respondToMessage(text) {
+      const normalized = normalize(text);
+      const match = Object.keys(botResponses).find((key) => normalize(key).includes(normalized) || normalized.includes(normalize(key)));
+      const response = match ? botResponses[match] : botResponses.default;
+      return response;
+    }
+
+    function handleUserMessage(text) {
+      addMessage(text, true);
+      const typingRow = showTyping();
+      advanceSuggestions();
+      window.setTimeout(() => {
+        typingRow.remove();
+        addMessage(respondToMessage(text), false);
+      }, 600);
+    }
+
+    function toggleChat() {
+      const isOpen = chatPanel.classList.contains('is-open');
+      chatPanel.classList.toggle('is-open', !isOpen);
+      chatToggle.setAttribute('aria-expanded', String(!isOpen));
+      if (!isOpen) {
+        chatNotification.classList.add('is-hidden');
+        sessionStorage.setItem('chat-notification-seen', 'true');
+        if (!startupMessageShown) {
+          startupMessageShown = true;
+          window.setTimeout(() => {
+            addMessage('Hey 👋 — I\'m a quick-answer bot for Yashas\'s portfolio. Ask me anything or pick a suggestion below.', false);
+          }, 600);
+        }
+      }
+    }
+
+    function startRoleTyping() {
+      if (reduceMotion) {
+        typedRole.textContent = roles[0];
+        cursor.style.visibility = 'hidden';
+        return;
+      }
+
+      let charIndex = 0;
+      let isDeleting = false;
+      let currentRole = 0;
+      let isPausing = false;
+
+      cursor.style.visibility = 'visible';
+
+      function tick() {
+        const fullText = roles[currentRole];
+
+        if (isPausing) return;
+
+        if (!isDeleting) {
+          // typing forward
+          charIndex++;
+          typedRole.textContent = fullText.slice(0, charIndex);
+
+          if (charIndex === fullText.length) {
+            // finished typing — pause before deleting
+            isPausing = true;
+            setTimeout(() => {
+              isPausing = false;
+              isDeleting = true;
+              setTimeout(tick, 60);
+            }, 1800);
+            return;
+          }
+          setTimeout(tick, 55);
+
+        } else {
+          // deleting
+          charIndex--;
+          typedRole.textContent = fullText.slice(0, charIndex);
+
+          if (charIndex === 0) {
+            // finished deleting — move to next role
+            isDeleting = false;
+            currentRole = (currentRole + 1) % roles.length;
+            isPausing = true;
+            setTimeout(() => {
+              isPausing = false;
+              setTimeout(tick, 60);
+            }, 300);
+            return;
+          }
+          setTimeout(tick, 30); // delete faster than type
+        }
+      }
+
+      // small delay before starting so it feels intentional after intro
+      setTimeout(tick, 500);
+    }
+
+    function animateStats() {
+      const cards = document.querySelectorAll('.stat-card');
+      cards.forEach((card) => {
+        const valueNode = card.querySelector('.stat-value');
+        const target = parseFloat(valueNode.getAttribute('data-target'));
+        const hasDecimal = String(target).includes('.');
+        let start = 0;
+        const duration = 1200;
+        const startTime = performance.now();
+        const formatValue = (value) => (hasDecimal ? value.toFixed(2).replace(/\.0+$/, '') : Math.round(value));
+        const tick = (time) => {
+          const progress = Math.min((time - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = target * eased;
+          valueNode.textContent = formatValue(current);
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }
+
+    function mountRevealObserver() {
+      const revealItems = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      revealItems.forEach((item) => observer.observe(item));
+    }
+
+    const scrollContainer = document.querySelector('.snap-container');
+
+    function getActiveSectionId() {
+      // Use the actual scrolling element's position, not window.scrollY —
+      // the page body doesn't scroll, .snap-container does.
+      const scrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY;
+      const activeIndex = sections.reduce((acc, section, index) => {
+        const top = section.offsetTop - 140;
+        if (scrollTop >= top) return index;
+        return acc;
+      }, 0);
+      return sections[activeIndex].id;
+    }
+
+    function setActiveSection(sectionId) {
+      navLinks.forEach((link) => link.classList.remove('is-active'));
+      mobileLinks.forEach((link) => link.classList.remove('is-active'));
+      const activeLink = document.querySelector(`.nav-links a[href="#${sectionId}"]`);
+      const activeMobileLink = document.querySelector(`.mobile-menu a[href="#${sectionId}"]`);
+      if (activeLink) activeLink.classList.add('is-active');
+      if (activeMobileLink) activeMobileLink.classList.add('is-active');
+      dotLinks.forEach((dot) => dot.classList.toggle('active', dot.getAttribute('data-section') === sectionId));
+    }
+
+    function updateActiveSection() {
+      setActiveSection(getActiveSectionId());
+    }
+
+    function initProjectRailDrag() {
+      let isDragging = false;
+      let startX = 0;
+      let startScrollLeft = 0;
+      const rail = projectRail;
+      rail.addEventListener('mousedown', (event) => {
+        isDragging = true;
+        startX = event.clientX;
+        startScrollLeft = rail.scrollLeft;
+        rail.classList.add('dragging');
+      });
+      window.addEventListener('mousemove', (event) => {
+        if (!isDragging) return;
+        const delta = event.clientX - startX;
+        rail.scrollLeft = startScrollLeft - delta;
+      });
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        rail.classList.remove('dragging');
+      });
+      rail.addEventListener('touchstart', (event) => {
+        isDragging = true;
+        startX = event.touches[0].clientX;
+        startScrollLeft = rail.scrollLeft;
+      }, { passive: true });
+      rail.addEventListener('touchmove', (event) => {
+        if (!isDragging) return;
+        const delta = event.touches[0].clientX - startX;
+        rail.scrollLeft = startScrollLeft - delta;
+      }, { passive: true });
+      rail.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+    }
+
+    // Background animation — a mouse-reactive "hill": a field of small
+    // dashes laid out across the whole viewport on a faint dotted grid.
+    // Wherever the cursor moves, nearby dashes lift and drift outward as
+    // if the surface bulged up underneath the pointer, warming in color
+    // at the peak and easing back to a neutral rest state as the cursor
+    // moves away. The tracked cursor position is eased (lerp) toward the
+    // raw mouse position every frame rather than snapping to it directly,
+    // which is what keeps the motion smooth instead of jittery.
+    function initBackground() {
+      const canvas = document.getElementById('bgCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // ── Fixed preset parameters ──────────────────────────────────────────
+      const P_INNER = 0;      // inner radius
+      const P_BAND = 350;     // band width
+      const P_ORGAN = 0.35;    // organism deformation amount
+      const P_OLOB = 3;       // organism lobes
+      const P_DIST = 10;      // distortion level
+      const P_DSPD = 1.00;    // deform speed
+      const P_DCMP = 1;       // deform complexity
+      const P_DRFT = 150;     // drift amount
+      const P_DVEL = 0.70;    // drift speed
+      const P_COLS = 70;      // angular particle count
+      const P_ROWS = 10;      // radial layers
+      const P_SIZE = 1.5;     // particle size
+      const P_SCTR = 0.35;    // size: center multiplier
+      const P_SEDG = 1.70;    // size: edge multiplier
+      const P_SLEN = 3.0;    // slit length multiplier
+      const P_MINA = 0.65;    // min opacity
+      const P_MAXA = 0.95;    // max opacity
+      const P_RAISE = 80;     // raise height
+      const P_INFL = 250;     // influence radius
+      const P_TENS = 27;      // spring tension
+      const P_DAMP = 0.85;    // damping
+      const P_SPRD = 0.54;    // wave spread
+      const P_FSPD = 30;      // follow speed
+      const P_MOM = 0.10;    // momentum
+      const P_ROT = 1.00;    // rotation speed
+      const P_JIT = 6;       // wave jitter
+      const P_RIPL = 85;      // jellyfish ripple strength
+      const P_RIPSPD = 0.60;    // ripple speed
+      const P_RIPLAG = 3.50;    // ripple lag (inner row phase delay)
+      const P_SPOKEJ = 22;      // spoke jitter
+      const P_PULSESTR = 0.92;    // bell pulse strength
+      const P_PULSESPD = 0.55;    // bell pulse speed
+      const P_PROPUL = 0.35;    // propulsion impulse
+      const P_COLSPD = 0.22;    // colour drift speed
+      const P_REVROWS = 7;      // directional reveal extra rows
+      const P_REVWID = 0.50;    // reveal width (arc sharpness)
+      const P_REVIN = 25;      // reveal in speed
+      const P_REVOUT = 1;      // reveal out speed
+
+      // Palette colours: Blue, Teal, Yellow, Purple
+      const COL_A = [59, 142, 255];
+      const COL_B = [255, 60, 172];
+      const COL_C = [249, 212, 35];
+      const COL_D = [155, 69, 245];
+
+      // ── State ────────────────────────────────────────────────────────────
+      let W = 0, H = 0;
+      let leadX = 0, leadY = 0;
+      let anchorX = 0, anchorY = 0;
+      let anchorVX = 0, anchorVY = 0;
+      let hasEntered = false;
+      let animTick = 0, deformTick = 0;
+      let lastTime = null;
+      let prevAX = 0, prevAY = 0;
+      let smoothDX = 0, smoothDY = 0;
+      let colorRotateTick = 0;
+
+      let driftPhaseX = Math.random() * Math.PI * 2;
+      let driftPhaseY = Math.random() * Math.PI * 2;
+      let driftPhaseX2 = Math.random() * Math.PI * 2;
+      let driftPhaseY2 = Math.random() * Math.PI * 2;
+
+      // ── Bell pulse (asymmetric contraction / relax) ──────────────────────
+      let bellTick = 0;
+      let propHeading = Math.random() * Math.PI * 2;
+      let propHeadingDrift = (Math.random() - 0.5) * 0.6;
+      let propOffX = 0, propOffY = 0;
+      let propVX = 0, propVY = 0;
+
+      function getBellPulse(t) {
+        const CONTRACT_FRAC = 0.28;
+        if (t < CONTRACT_FRAC) {
+          const ct = t / CONTRACT_FRAC;
+          return 1 - Math.pow(1 - ct, 2);
+        }
+        const rt = (t - CONTRACT_FRAC) / (1 - CONTRACT_FRAC);
+        return 1 - (rt < 0.5 ? 2 * rt * rt : 1 - Math.pow(-2 * rt + 2, 2) / 2);
+      }
+
+      // ── Directional reveal (per-column fog-of-war) ───────────────────────
+      const revealAmt = new Float32Array(P_COLS);
+
+      // ── Cloth physics buffers ────────────────────────────────────────────
+      const clothN = P_ROWS * P_COLS;
+      const clothDX = new Float32Array(clothN);
+      const clothDY = new Float32Array(clothN);
+      const clothVX = new Float32Array(clothN);
+      const clothVY = new Float32Array(clothN);
+
+      // ── Helpers ──────────────────────────────────────────────────────────
+      function getBez(t, p0, p1, p2, p3) {
+        const mt = 1 - t, mt2 = mt * mt, t2 = t * t;
+        return mt2 * mt * p0 + 3 * mt2 * t * p1 + 3 * mt * t2 * p2 + t2 * t * p3;
+      }
+      function solveBez(x, cx1, cx2) {
+        let t = x;
+        for (let i = 0; i < 6; i++) {
+          const v = getBez(t, 0, cx1, cx2, 1);
+          const d = (getBez(t + 0.001, 0, cx1, cx2, 1) - v) / 0.001;
+          if (!d) break;
+          t -= (v - x) / d;
+        }
+        return Math.max(0, Math.min(1, t));
+      }
+
+      function lerpColor(a, b, t) {
+        return [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
+      }
+
+      function getColor(angle) {
+        // Slowly rotating gradient so color travels around the ring over time
+        const shiftedAngle = angle + colorRotateTick * Math.PI * 2;
+        const t = ((shiftedAngle / (Math.PI * 2)) + 1) % 1;
+
+        let col;
+        if (t < 0.25) col = lerpColor(COL_A, COL_B, t / 0.25);
+        else if (t < 0.5) col = lerpColor(COL_B, COL_C, (t - 0.25) / 0.25);
+        else if (t < 0.75) col = lerpColor(COL_C, COL_D, (t - 0.5) / 0.25);
+        else col = lerpColor(COL_D, COL_A, (t - 0.75) / 0.25);
+
+        // ── Shimmer / shine pass ──────────────────────────────────────────
+        // Two fast sine waves at different frequencies create a highlight that
+        // sweeps around the ring, making it feel iridescent and shiny rather
+        // than flat. The boost is additive on each channel, capped at 255.
+        // shimmerTick advances independently of colorRotateTick so the shine
+        // moves at a different speed from the base gradient — this produces
+        // the "light catching" feeling of a metallic/glossy surface.
+        const shimmerA = 0.5 + 0.5 * Math.sin(shiftedAngle * 2.5 + colorRotateTick * Math.PI * 6.0);
+        const shimmerB = 0.5 + 0.5 * Math.sin(shiftedAngle * 4.0 - colorRotateTick * Math.PI * 9.0);
+        // Combine: primary shimmer is broad and slow, secondary is sharp and fast
+        const shimmer = shimmerA * 0.65 + shimmerB * 0.35;
+        // Boost: at peak shimmer, channels whiten toward 255 (like a specular highlight)
+        const boost = shimmer * shimmer * 68; // quadratic so only the peak really shines
+        return [
+          Math.min(255, col[0] + boost),
+          Math.min(255, col[1] + boost),
+          Math.min(255, col[2] + boost),
+        ];
+      }
+
+      function getDeform(angle, tick) {
+        if (P_DIST === 0) return 0;
+        let d = 0;
+        for (let i = 1; i <= P_DCMP; i++) {
+          const amp = P_DIST / (i * 1.4);
+          const phase = tick * (0.7 + i * 0.31) + i * 1.3;
+          d += Math.sin(angle * (i + 1) + phase) * amp;
+          d += Math.cos(angle * (i + 2) + phase * 0.6) * amp * 0.35;
+        }
+        return d;
+      }
+
+      function getOrganism(angle, tick, radialT) {
+        if (P_ORGAN === 0) return 0;
+        const t = tick * 0.12;
+        let d = 0;
+        d += Math.sin(angle * P_OLOB + t * 1.0) * 1.0;
+        d += Math.sin(angle * (P_OLOB + 2) - t * 0.7 + 1.7) * 0.55;
+        d += Math.sin(angle * 2 + t * 0.4 + 4.1) * 0.7;
+        d += Math.cos(angle * (P_OLOB - 1 || 1) + t * 0.55 + 2.3) * 0.4;
+        d /= 2.65;
+        const rimBias = radialT === undefined ? 1 : (0.25 + 0.75 * radialT);
+        return d * P_ORGAN * P_BAND * 0.5 * rimBias;
+      }
+
+      function getRipple(angle, radialT, tick) {
+        if (!P_RIPL) return 0;
+        const lagPhase = (1 - radialT) * P_RIPLAG;
+        const t = tick * P_RIPSPD - lagPhase;
+        let d = Math.sin(t + angle * 1.6) * 1.0;
+        d += Math.sin(t * 1.7 + angle * 0.4 + 2.1) * 0.4;
+        d /= 1.4;
+        const rimBias = Math.pow(radialT, 1.3);
+        return d * P_RIPL * rimBias;
+      }
+
+      function hashJitter(row, col) {
+        const h = Math.sin(row * 12.9898 + col * 78.233) * 43758.5453;
+        return (h - Math.floor(h)) * 2 - 1;
+      }
+
+      // ── Cloth physics update ─────────────────────────────────────────────
+      function updateCloth(dt, cx, cy) {
+        const pulse = getBellPulse(bellTick);
+        for (let row = 0; row < P_ROWS; row++) {
+          const radialT = row / Math.max(1, P_ROWS - 1);
+          const pulseRimBias = Math.pow(radialT, 1.4);
+          const pulseContract = pulse * P_PULSESTR * pulseRimBias * P_BAND * 0.22;
+          const r = P_INNER + radialT * P_BAND - pulseContract;
+          for (let col = 0; col < P_COLS; col++) {
+            const idx = row * P_COLS + col;
+            const jit = hashJitter(row, col);
+            const angle = (col / P_COLS) * Math.PI * 2 + jit * P_SPOKEJ * 0.0015;
+            const defOff = getDeform(angle, deformTick);
+            const organOff = getOrganism(angle, deformTick, radialT);
+            const rippleOff = getRipple(angle, radialT, deformTick);
+            const deformR = r + defOff + organOff + rippleOff;
+            const rx = cx + Math.cos(angle) * deformR;
+            const ry = cy + Math.sin(angle) * deformR;
+            const distToCursor = Math.sqrt((rx - leadX) ** 2 + (ry - leadY) ** 2);
+            const spatialInfl = Math.max(0, 1 - distToCursor / P_INFL);
+            const lifted = spatialInfl * spatialInfl * (3 - 2 * spatialInfl);
+            const radX = Math.cos(angle), radY = Math.sin(angle);
+            const targetLift = lifted * P_RAISE;
+            const curLift = clothDX[idx] * radX + clothDY[idx] * radY;
+            const liftErr = targetLift - curLift;
+            clothVX[idx] += radX * liftErr * P_TENS * dt;
+            clothVY[idx] += radY * liftErr * P_TENS * dt;
+            clothVX[idx] *= P_DAMP;
+            clothVY[idx] *= P_DAMP;
+            clothDX[idx] += clothVX[idx] * dt;
+            clothDY[idx] += clothVY[idx] * dt;
+          }
+        }
+        // Angular wave propagation
+        for (let row = 0; row < P_ROWS; row++) {
+          for (let col = 0; col < P_COLS; col++) {
+            const idx = row * P_COLS + col;
+            const prev = row * P_COLS + ((col - 1 + P_COLS) % P_COLS);
+            const next = row * P_COLS + ((col + 1) % P_COLS);
+            clothVX[idx] += (clothDX[prev] + clothDX[next] - 2 * clothDX[idx]) * P_SPRD;
+            clothVY[idx] += (clothDY[prev] + clothDY[next] - 2 * clothDY[idx]) * P_SPRD;
+          }
+        }
+      }
+
+      // ── Directional reveal update ────────────────────────────────────────
+      function updateReveal(dt, moveX, moveY) {
+        const speed = Math.sqrt(moveX * moveX + moveY * moveY);
+        if (speed < 0.3 || P_REVROWS === 0) {
+          for (let col = 0; col < P_COLS; col++) {
+            revealAmt[col] += (0 - revealAmt[col]) * Math.min(1, P_REVOUT * dt);
+            if (revealAmt[col] < 0.001) revealAmt[col] = 0;
+          }
+          return;
+        }
+        const speedNorm = Math.min(1, speed / 4);
+        const dirX = moveX / speed;
+        const dirY = moveY / speed;
+        const sharpness = 1 + (1 - P_REVWID) * 6;
+        for (let col = 0; col < P_COLS; col++) {
+          const angle = (col / P_COLS) * Math.PI * 2;
+          const radX = Math.cos(angle);
+          const radY = Math.sin(angle);
+          const dot = radX * dirX + radY * dirY;
+          const facing = Math.max(0, dot);
+          const target = Math.pow(facing, sharpness) * speedNorm;
+          const rate = target > revealAmt[col] ? P_REVIN : P_REVOUT;
+          revealAmt[col] += (target - revealAmt[col]) * Math.min(1, rate * dt);
+          if (revealAmt[col] < 0.001) revealAmt[col] = 0;
+        }
+      }
+
+      // ── Draw frame ───────────────────────────────────────────────────────
+      function drawFrame(tick, cx, cy) {
+        if (!W || !H) return;
+        ctx.clearRect(0, 0, W, H);
+
+        const tickRad = tick * Math.PI * 2;
+        const pulse = getBellPulse(bellTick);
+        const pulseContractOuter = pulse * P_PULSESTR * P_BAND * 0.22;
+        const outerR = P_INNER + P_BAND - pulseContractOuter;
+        const halfThick = P_BAND / 2;
+        const rowSpacing = P_BAND / Math.max(1, P_ROWS - 1);
+
+        for (let col = 0; col < P_COLS; col++) {
+          const baseAngle = (col / P_COLS) * Math.PI * 2;
+          const reveal = revealAmt[col] || 0;
+          const extraRows = reveal > 0.001 ? Math.ceil(P_REVROWS * reveal) : 0;
+          const totalRows = P_ROWS + extraRows;
+          const revealedDepth = P_REVROWS * reveal;
+          const colOuterR = outerR + revealedDepth * rowSpacing;
+          const colHalfThick = (colOuterR - P_INNER) / 2;
+
+          for (let row = 0; row < totalRows; row++) {
+            const isExtra = row >= P_ROWS;
+            const radialT = row / Math.max(1, P_ROWS - 1);
+            const pulseRimBias = Math.pow(Math.min(1, radialT), 1.4);
+            const pulseContract = pulse * P_PULSESTR * pulseRimBias * P_BAND * 0.22;
+            const baseR = P_INNER + radialT * P_BAND - pulseContract;
+            const sizeT = P_SCTR + (P_SEDG - P_SCTR) * Math.min(1, radialT);
+
+            if (isExtra) {
+              const depthIntoExtra = (row - P_ROWS + 1);
+              if (depthIntoExtra > revealedDepth + 0.001) continue;
+            }
+
+            const jit = hashJitter(row, col);
+            const angle = baseAngle + jit * P_SPOKEJ * 0.0015;
+            const defOff = getDeform(angle, deformTick);
+            const organOff = getOrganism(angle, deformTick, Math.min(1, radialT));
+            const rippleOff = getRipple(angle, Math.min(1, radialT), deformTick);
+            const radX = Math.cos(angle), radY = Math.sin(angle);
+
+            let radialDeform = 0;
+            if (!isExtra) {
+              const idx = row * P_COLS + col;
+              radialDeform = clothDX[idx] * radX + clothDY[idx] * radY;
+            }
+
+            const r = baseR + defOff + organOff + rippleOff;
+            const wave =
+              Math.sin(angle * 3 + tickRad) * 0.6 +
+              Math.sin(angle * 5 - tickRad) * 0.4 +
+              Math.sin(row * 0.4 + tickRad) * 0.3;
+            const waveR = r + wave * P_JIT;
+            const deformedR = waveR + radialDeform;
+
+            if (!isExtra && (deformedR < P_INNER * 0.82 || deformedR > outerR * 1.18)) continue;
+
+            const px = cx + Math.cos(angle) * deformedR;
+            const py = cy + Math.sin(angle) * deformedR;
+
+            const liftT = Math.max(0, Math.min(1.4, radialDeform / (P_RAISE + 1)));
+            const liftMag = Math.min(1, liftT);
+            const bulge = Math.pow(Math.sin(liftMag * Math.PI), 0.6);
+
+            let t2 = ((wave + 1.5) / 3);
+            t2 = Math.pow(Math.max(0, t2), 1.2);
+            let alpha = P_MINA + (t2) * (P_MAXA - P_MINA);
+            alpha += bulge * 0.25;
+
+            let fade = Math.min(deformedR - P_INNER, colOuterR - deformedR) / colHalfThick;
+            fade = Math.max(0, Math.min(1, fade));
+            const ft = solveBez(fade, 0.42, 0.58);
+            alpha *= getBez(ft, 0, 0, 1, 1);
+            alpha = Math.max(0, Math.min(1, alpha));
+
+            if (alpha > 0.01) {
+              const [cr, cg, cb] = getColor(angle);
+              ctx.globalAlpha = alpha;
+              ctx.fillStyle = `rgb(${cr},${cg},${cb})`;
+              const popScale = Math.max(0.15, 1 - liftMag * 0.7 + bulge * 1.3);
+              const w = P_SIZE * sizeT * popScale;
+              const len = w * P_SLEN;
+              ctx.save();
+              ctx.translate(px, py);
+              ctx.rotate(angle + Math.PI / 2 + wave * 0.18);
+              ctx.beginPath();
+              ctx.roundRect(-w / 2, -len / 2, w, len, w / 2);
+              ctx.fill();
+              ctx.restore();
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      // ── Animation loop ──────────────────────────────────────────────────
+      function animate(ts) {
+        if (!lastTime) lastTime = ts;
+        const dt = Math.min((ts - lastTime) / 1000, 0.05);
+        lastTime = ts;
+
+        animTick = (animTick + dt * P_ROT) % 1;
+        deformTick = (deformTick + dt * P_DSPD);
+        colorRotateTick = (colorRotateTick + dt * P_COLSPD) % 1;
+
+        // Bell pulse + propulsion
+        const prevBellTick = bellTick;
+        bellTick = (bellTick + dt * P_PULSESPD * 0.5) % 1;
+        if (bellTick < prevBellTick) {
+          propHeadingDrift += (Math.random() - 0.5) * 0.5;
+          propHeadingDrift = Math.max(-1, Math.min(1, propHeadingDrift * 0.7));
+          propHeading += propHeadingDrift * 0.6;
+          const impulse = P_PROPUL * 70;
+          propVX += Math.cos(propHeading) * impulse;
+          propVY += Math.sin(propHeading) * impulse;
+        }
+        propVX += -propOffX * 0.6 * dt;
+        propVY += -propOffY * 0.6 * dt;
+        propVX *= Math.pow(0.25, dt);
+        propVY *= Math.pow(0.25, dt);
+        propOffX += propVX * dt;
+        propOffY += propVY * dt;
+
+        // Lissajous drift
+        const driftSpeed = P_DVEL * 0.5;
+        driftPhaseX += dt * driftSpeed * 1.000;
+        driftPhaseX2 += dt * driftSpeed * 1.414;
+        driftPhaseY += dt * driftSpeed * 0.618;
+        driftPhaseY2 += dt * driftSpeed * 0.382;
+        const driftX = (Math.sin(driftPhaseX) * 0.65 + Math.sin(driftPhaseX2) * 0.35) * P_DRFT;
+        const driftY = (Math.sin(driftPhaseY) * 0.65 + Math.sin(driftPhaseY2) * 0.35) * P_DRFT;
+
+        // Anchor spring follows cursor
+        anchorVX += (leadX - anchorX) * P_FSPD * dt;
+        anchorVY += (leadY - anchorY) * P_FSPD * dt;
+        anchorVX *= P_MOM;
+        anchorVY *= P_MOM;
+        anchorX += anchorVX;
+        anchorY += anchorVY;
+
+        const dX = anchorX - prevAX;
+        const dY = anchorY - prevAY;
+        prevAX = anchorX;
+        prevAY = anchorY;
+        smoothDX = smoothDX * 0.55 + dX * 0.45;
+        smoothDY = smoothDY * 0.55 + dY * 0.45;
+
+        const drawX = anchorX + driftX + propOffX;
+        const drawY = anchorY + driftY + propOffY;
+
+        updateCloth(dt, drawX, drawY);
+        updateReveal(dt, smoothDX, smoothDY);
+        drawFrame(animTick, drawX, drawY);
+        requestAnimationFrame(animate);
+      }
+
+      // ── Sizing & events ──────────────────────────────────────────────────
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        if (!hasEntered) {
+          leadX = anchorX = prevAX = W / 2;
+          leadY = anchorY = prevAY = H / 2;
+        }
+      }
+
+      // ── Canvas visibility: fade out when #contact is active ──────────────
+      const contactSection = document.getElementById('contact');
+      if (contactSection && scrollContainer) {
+        scrollContainer.addEventListener('scroll', () => {
+          const activeSect = getActiveSectionId();
+          canvas.style.opacity = activeSect === 'contact' ? '0' : '0.85';
+        }, { passive: true });
+      }
+
+      window.addEventListener('mousemove', (e) => {
+        hasEntered = true;
+        leadX = e.clientX;
+        leadY = e.clientY;
+      });
+      window.addEventListener('mouseleave', () => {
+        hasEntered = false;
+        leadX = W / 2; leadY = H / 2;
+      });
+      const heroEl = document.getElementById('hero');
+      if (heroEl) {
+        heroEl.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          hasEntered = true;
+          leadX = e.touches[0].clientX;
+          leadY = e.touches[0].clientY;
+        }, { passive: false });
+        heroEl.addEventListener('touchend', () => {
+          hasEntered = false;
+          leadX = W / 2; leadY = H / 2;
+        });
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      requestAnimationFrame(animate);
+    }
+
+    let tourPromptWired = false;
+    function showTourPrompt() {
+      if (sessionStorage.getItem('tourAsked')) return;
+      const modal = document.getElementById('tourModal');
+      if (!modal) return;
+      modal.style.display = 'grid';
+      modal.style.pointerEvents = 'auto';
+      modal.setAttribute('aria-hidden', 'false');
+      if (tourPromptWired) return; // listeners already attached, avoid double-binding
+      tourPromptWired = true;
+      const yes = document.getElementById('tourYes');
+      const no = document.getElementById('tourNo');
+      yes.addEventListener('click', () => {
+        sessionStorage.setItem('tourAsked', '1');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        startTour();
+      });
+      no.addEventListener('click', () => {
+        sessionStorage.setItem('tourAsked', '1');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    let tourTimers = [];
+    const tourDescriptions = {
+      hero: 'Welcome — this is the landing section. Name, role, and quick actions live here.',
+      about: 'A quick snapshot: stats up top, then a short bio on what I build and why.',
+      experience: 'Where I\'ve actually shipped — roles, dates, and what each one involved.',
+      awards: 'Recognition from hackathons — podium placements and certificate links.',
+      'hackathon-wins': 'A closer look at the hackathons themselves — photos and moments from each win.',
+      projects: 'Selected projects, each with the stack used and a link to dig deeper.',
+      skills: 'A compact map of the languages, frameworks, and tools I operate day to day.',
+      contact: 'Ways to reach me directly — email, GitHub, and LinkedIn.'
+    };
+
+    function clearTourTimers() {
+      tourTimers.forEach((id) => clearTimeout(id));
+      tourTimers = [];
+    }
+
+    function tourSetTimeout(fn, delay) {
+      const id = window.setTimeout(fn, delay);
+      tourTimers.push(id);
+      return id;
+    }
+
+    function scrollContainerTo(top, smooth = true) {
+      if (!scrollContainer) return;
+      scrollContainer.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' });
+    }
+
+    function showTourCard(sectionId) {
+      const sidebar = document.getElementById('tourSidebar');
+      const text = tourDescriptions[sectionId] || '';
+      sidebar.innerHTML = `<div class="panel"><strong>${sectionId.toUpperCase()}</strong><div style="margin-top:8px;color:var(--text-secondary);">${text}</div><div style="margin-top:8px; text-align:right;"><button class="btn-secondary" id="tourSkip">Skip tour</button></div></div>`;
+      sidebar.classList.add('visible');
+      document.getElementById('tourSkip').addEventListener('click', stopTour);
+    }
+
+    function hideTourCard() {
+      const sidebar = document.getElementById('tourSidebar');
+      if (sidebar) { sidebar.classList.remove('visible'); sidebar.innerHTML = ''; }
+    }
+
+    // Smoothly scroll the inner section content from fromTop to toTop over
+    // `duration` ms using a single requestAnimationFrame loop. Interpolating
+    // every frame (instead of jumping scrollTop in a handful of setTimeout
+    // steps) is what keeps this from reading as jittery — and driving
+    // scrollTop directly avoids fighting with the browser's own
+    // smooth-scroll easing from a separate scrollTo({behavior:'smooth'}) call.
+    let withinScrollRAF = null;
+    function slowScrollWithin(fromTop, toTop, duration, onTick) {
+      if (withinScrollRAF) cancelAnimationFrame(withinScrollRAF);
+      const start = performance.now();
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = progress < 0.5
+          ? 2 * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        const top = fromTop + (toTop - fromTop) * eased;
+        scrollContainerTo(top, false);
+        if (onTick) onTick(progress);
+        if (progress < 1) {
+          withinScrollRAF = requestAnimationFrame(step);
+        } else {
+          withinScrollRAF = null;
+        }
+      }
+      withinScrollRAF = requestAnimationFrame(step);
+    }
+
+    function cancelSlowScroll() {
+      if (withinScrollRAF) {
+        cancelAnimationFrame(withinScrollRAF);
+        withinScrollRAF = null;
+      }
+    }
+
+    function startTour() {
+      clearTourTimers();
+      if (!scrollContainer) return;
+
+      const heroEl = document.getElementById('hero');
+      const aboutEl = document.getElementById('about');
+      const experienceEl = document.getElementById('experience');
+      const awardsEl = document.getElementById('awards');
+      const hackathonWinsEl = document.getElementById('hackathon-wins');
+      const projectsEl = document.getElementById('projects');
+      const skillsEl = document.getElementById('skills');
+      const contactEl = document.getElementById('contact');
+
+      let elapsed = 0;
+
+      // 1. Hero — 3s
+      tourSetTimeout(() => {
+        scrollContainerTo(heroEl.offsetTop);
+        setActiveSection('hero');
+        showTourCard('hero');
+      }, elapsed);
+      elapsed += 2500;
+
+      // 2. About — 4s
+      tourSetTimeout(() => {
+        scrollContainerTo(aboutEl.offsetTop);
+        setActiveSection('about');
+        showTourCard('about');
+      }, elapsed);
+      elapsed += 5000;
+
+      // 3. Experience — 5s, slowly scroll down through both timeline entries
+      tourSetTimeout(() => {
+        scrollContainerTo(experienceEl.offsetTop);
+        setActiveSection('experience');
+        showTourCard('experience');
+        const expScrollStart = experienceEl.offsetTop;
+        const expScrollEnd = expScrollStart + experienceEl.offsetHeight * 0.4;
+        tourSetTimeout(() => {
+          slowScrollWithin(expScrollStart, expScrollEnd, 3200);
+        }, 800);
+      }, elapsed);
+      elapsed += 5000;
+
+      // 4. Awards — 4s
+      tourSetTimeout(() => {
+        scrollContainerTo(awardsEl.offsetTop + 100);
+        setActiveSection('awards');
+        showTourCard('awards');
+      }, elapsed);
+      elapsed += 4000;
+
+      // 5. Hackathon Wins — 4s
+      tourSetTimeout(() => {
+        scrollContainerTo(hackathonWinsEl.offsetTop + 200);
+        setActiveSection('hackathon-wins');
+        showTourCard('hackathon-wins');
+      }, elapsed);
+      elapsed += 5000;
+
+      // 6. Projects — 4s
+      tourSetTimeout(() => {
+        scrollContainerTo(projectsEl.offsetTop+80);
+        setActiveSection('projects');
+        showTourCard('projects');
+      }, elapsed);
+      elapsed += 4000;
+
+      // 7. Skills — 4s
+      tourSetTimeout(() => {
+        scrollContainerTo(skillsEl.offsetTop + 80);
+        setActiveSection('skills');
+        showTourCard('skills');
+      }, elapsed);
+      elapsed += 3000;
+
+      // 8. Contact — 4s
+      tourSetTimeout(() => {
+        scrollContainerTo(contactEl.offsetTop);
+        setActiveSection('contact');
+        showTourCard('contact');
+      }, elapsed);
+      elapsed += 3000;
+
+      // 9. Return to Projects and end the tour there
+      tourSetTimeout(() => {
+        scrollContainerTo(projectsEl.offsetTop+80);
+        setActiveSection('projects');
+        hideTourCard();
+      }, elapsed);
+    }
+
+    function stopTour() {
+      clearTourTimers();
+      hideTourCard();
+    }
+
+    (function () {
+      const skipIntro = sessionStorage.getItem('introSeen') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (skipIntro) {
+        intro.classList.add('done');
+        siteShell.classList.add('is-ready');
+        startRoleTyping();
+        sessionStorage.setItem('introSeen', '1');
+        setTimeout(() => {
+          try { showTourPrompt(); } catch (e) { /* noop */ }
+        }, 500);
+        return;
+      }
+
+      setTimeout(() => {
+        introName.style.opacity = '1';
+      }, 300);
+
+      setTimeout(() => {
+        introTagline.style.opacity = '1';
+      }, 1000);
+
+      setTimeout(() => {
+        introTop.classList.add('split');
+        introBottom.classList.add('split');
+      }, 2000);
+
+      setTimeout(() => {
+        intro.classList.add('done');
+        intro.setAttribute('aria-hidden', 'true');
+        siteShell.classList.add('is-ready');
+        startRoleTyping();
+        sessionStorage.setItem('introSeen', '1');
+        // show tour prompt after intro completes
+        showTourPrompt();
+      }, 2700);
+    })();
+
+    function initPageLoadSequence() {
+      if (reduceMotion) return;
+      window.setTimeout(() => topNav.classList.add('is-visible'), 50);
+      window.setTimeout(() => heroEyebrow.classList.add('is-visible'), 150);
+      window.setTimeout(() => {
+        heroName.classList.add('is-visible');
+        // pop effect shortly after the name becomes visible
+        window.setTimeout(() => heroName.classList.add('pop'), 120);
+      }, 300);
+      window.setTimeout(() => heroRole.classList.add('is-visible'), 500);
+      window.setTimeout(() => heroBio.classList.add('is-visible'), 650);
+      window.setTimeout(() => heroActions.classList.add('is-visible'), 800);
+      window.setTimeout(() => sideDots.classList.add('is-visible'), 900);
+      window.setTimeout(() => chatToggle.classList.add('is-visible'), 1200);
+    }
+
+    function initMobileMenu() {
+      mobileToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('is-open');
+      });
+      mobileLinks.forEach((link) => {
+        link.addEventListener('click', () => mobileMenu.classList.remove('is-open'));
+      });
+    }
+
+    function initChat() {
+      const seenNotification = sessionStorage.getItem('chat-notification-seen');
+      if (!seenNotification) {
+        chatNotification.classList.remove('is-hidden');
+      }
+      chatToggle.addEventListener('click', toggleChat);
+      chatClose.addEventListener('click', () => {
+        chatPanel.classList.remove('is-open');
+        chatToggle.setAttribute('aria-expanded', 'false');
+      });
+      sendBtn.addEventListener('click', () => {
+        if (!chatInput.value.trim()) return;
+        handleUserMessage(chatInput.value.trim());
+        chatInput.value = '';
+      });
+      chatInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          sendBtn.click();
+        }
+      });
+      renderSuggestions();
+    }
+
+    /* ── About section: timed entry animation ── */
+    function runAboutAnimation(aboutEl) {
+      const statsGrid = aboutEl.querySelector('.stats-grid');
+      const statValues = aboutEl.querySelectorAll('.stat-value');
+
+      // Helper: count a single stat value up from 0 to target over `duration` ms
+      function countUp(valueNode, duration) {
+        const target = parseFloat(valueNode.getAttribute('data-target'));
+        const hasDecimal = String(target).includes('.');
+        const startTime = performance.now();
+        function tick(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3); // cubic ease-out
+          const current = target * eased;
+          valueNode.textContent = hasDecimal
+            ? current.toFixed(2).replace(/\.0+$/, '')
+            : Math.round(current);
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      // Calculate translate needed to move statsGrid centre → wrapper centre
+      function getCentreOffset() {
+        const wrapper = aboutEl.querySelector('.about-sticky-wrapper');
+        const wW = wrapper.clientWidth;
+        const wH = wrapper.clientHeight;
+        const gL = statsGrid.offsetLeft;
+        const gT = statsGrid.offsetTop;
+        const gW = statsGrid.offsetWidth;
+        const gH = statsGrid.offsetHeight;
+        return {
+          dx: wW / 2 - (gL + gW / 2),
+          dy: wH / 2 - (gT + gH / 2)
+        };
+      }
+
+      // Phase 1 – backdrop rises (small pill from bottom)
+      aboutEl.classList.add('about-phase-rise');
+
+      // Phase 2 – backdrop expands to fill section
+      aboutAnimTimers.push(setTimeout(() => {
+        aboutEl.classList.add('about-phase-expand');
+      }, 300));
+
+      // Phase 3 – stat cards appear centred & count up
+      aboutAnimTimers.push(setTimeout(() => {
+        const { dx, dy } = getCentreOffset();
+        // Place grid at centre, scaled up, then make it visible
+        statsGrid.style.transition = 'none';
+        statsGrid.style.transform = `translate(${dx}px, ${dy}px) scale(1.22)`;
+        statsGrid.style.opacity = '0';
+
+        // Force reflow so the initial transform is applied before we fade in
+        void statsGrid.offsetWidth;
+
+        statsGrid.style.transition = 'opacity 0.4s ease';
+        statsGrid.style.opacity = '1';
+        aboutEl.classList.add('about-phase-cards');
+
+        // Start counting up all stat values simultaneously
+        statValues.forEach(node => countUp(node, 1400));
+      }, 1100));
+
+      // Phase 4 – cards shrink to their natural grid position on the right
+      aboutAnimTimers.push(setTimeout(() => {
+        aboutEl.classList.add('about-phase-settle');
+        // CSS transition handles the final snap to translate(0,0) scale(1)
+        // Remove inline transform so the CSS rule takes over
+        statsGrid.style.transform = '';
+        statsGrid.style.opacity = '';
+        statsGrid.style.transition = '';
+      }, 2700));
+
+      // Phase 5 – text fades in from the left
+      // (handled by about-phase-settle CSS rule on .about-content)
+
+      // Mark done
+      aboutAnimTimers.push(setTimeout(() => {
+        aboutEl.classList.add('about-phase-done');
+      }, 3400));
+    }
+
+    let aboutAnimTimers = [];
+
+    function resetAboutAnimation(aboutEl) {
+      // Cancel any in-flight timers from a previous run
+      aboutAnimTimers.forEach(id => clearTimeout(id));
+      aboutAnimTimers = [];
+
+      // Strip all phase classes so the section snaps back to its initial state
+      const phases = ['about-phase-rise', 'about-phase-expand', 'about-phase-cards',
+        'about-phase-settle', 'about-phase-done'];
+      phases.forEach(c => aboutEl.classList.remove(c));
+
+      // Reset inline styles set by JS during the animation
+      const statsGrid = aboutEl.querySelector('.stats-grid');
+      if (statsGrid) {
+        statsGrid.style.transform = '';
+        statsGrid.style.opacity = '';
+        statsGrid.style.transition = '';
+      }
+
+      // Reset stat values back to 0
+      aboutEl.querySelectorAll('.stat-value').forEach(n => { n.textContent = '0'; });
+    }
+
+    function initAboutScrub() {
+      const aboutEl = document.getElementById('about');
+      if (!aboutEl) return;
+
+      // Keep the observer alive forever so the animation replays each visit
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Section entered viewport — play the animation
+            runAboutAnimation(aboutEl);
+          } else {
+            // Section left viewport — reset so next entry starts fresh
+            resetAboutAnimation(aboutEl);
+          }
+        });
+      }, { threshold: 0.25 });
+
+      observer.observe(aboutEl);
+    }
+
+    function initStatsObserver() {
+      // Replaced by initAboutScrub
+    }
+
+    /* ── Experience section: per-entry scroll reveal ── */
+    function initExperienceTimeline() {
+      const entries = Array.from(document.querySelectorAll('#experience .timeline-entry'));
+      if (!entries.length) return;
+
+      let animatingIndex = -1;
+
+      // Function to instantly complete all animations for entry (fallback for fast scroll)
+      function instantFinishEntry(entry) {
+        if (entry._timeouts) {
+          entry._timeouts.forEach(clearTimeout);
+          entry._timeouts = null;
+        }
+        entry.classList.add('anim-dot', 'anim-card', 'anim-line');
+        entry.dataset.animState = 'done';
+      }
+
+      // Animates a single timeline entry sequentially
+      function animateEntry(entry, index) {
+        entry.dataset.animState = 'animating';
+        animatingIndex = index;
+        entry._timeouts = [];
+
+        // 1. Dot drops/snaps in first
+        entry.classList.add('anim-dot');
+
+        // 2. Card materializes shortly after dot lands (350ms)
+        const t1 = setTimeout(() => {
+          entry.classList.add('anim-card');
+        }, 350);
+        entry._timeouts.push(t1);
+
+        // 3. Line segment draws down once card has appeared (850ms)
+        const t2 = setTimeout(() => {
+          entry.classList.add('anim-line');
+        }, 850);
+        entry._timeouts.push(t2);
+
+        // 4. Mark as done and check if we can trigger the next entry in queue (1450ms)
+        const t3 = setTimeout(() => {
+          entry.dataset.animState = 'done';
+          entry._timeouts = null;
+          animatingIndex = -1;
+          checkTimelineChain();
+        }, 1450);
+        entry._timeouts.push(t3);
+      }
+
+      // Main controller that handles sequence triggers and fast scroll checks
+      function checkTimelineChain() {
+        // Fast scroll bypass: if an entry is scrolled past (top is above viewport), finish instantly
+        entries.forEach((entry, idx) => {
+          const rect = entry.getBoundingClientRect();
+          if (rect.bottom < 0 && entry.dataset.animState !== 'done') {
+            instantFinishEntry(entry);
+          }
+        });
+
+        // Try to trigger the next ready entry
+        for (let i = 0; i < entries.length; i++) {
+          const entry = entries[i];
+          const state = entry.dataset.animState || 'idle';
+
+          if (state === 'animating') {
+            // Block subsequent animations while this one is playing
+            return;
+          }
+
+          if (state === 'idle') {
+            // If the entry is intersecting, start animating
+            if (entry.dataset.intersecting === 'true') {
+              // Ensure all previous entries are finished instantly
+              for (let prevIdx = 0; prevIdx < i; prevIdx++) {
+                if (entries[prevIdx].dataset.animState !== 'done') {
+                  instantFinishEntry(entries[prevIdx]);
+                }
+              }
+              animateEntry(entry, i);
+            }
+            return; // Chain is blocked until this one animates
+          }
+        }
+      }
+
+      // Hook up IntersectionObserver for each entry
+      const observer = new IntersectionObserver((observations) => {
+        observations.forEach(obs => {
+          const entry = obs.target;
+          if (obs.isIntersecting) {
+            entry.dataset.intersecting = 'true';
+            checkTimelineChain();
+          } else {
+            entry.dataset.intersecting = 'false';
+          }
+        });
+      }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      entries.forEach(entry => {
+        entry.dataset.animState = 'idle';
+        entry.dataset.intersecting = 'false';
+        observer.observe(entry);
+      });
+
+      // Hook scroll container (or window) scroll listener to check for fast-scroll bypasses
+      const checkBypasses = () => {
+        entries.forEach((entry) => {
+          const rect = entry.getBoundingClientRect();
+          if (rect.bottom < 0 && entry.dataset.animState !== 'done') {
+            instantFinishEntry(entry);
+            checkTimelineChain();
+          }
+        });
+      };
+
+      if (scrollContainer) {
+        scrollContainer.addEventListener('scroll', checkBypasses, { passive: true });
+      } else {
+        window.addEventListener('scroll', checkBypasses, { passive: true });
+      }
+    }
+
+
+
+    /* ── Awards section: cursor proximity and scroll border effects ── */
+    function initAwardsProximity() {
+      const awardList = document.querySelector('.award-list');
+      if (!awardList) return;
+      const rows = Array.from(awardList.querySelectorAll('.award-row'));
+
+      let mouseInside = false;
+      let mouseY = 0;
+      let rafActive = false;
+
+      function applyLiftStyles(row, lift) {
+        const rank = row.querySelector('.award-rank');
+        const eventEl = row.querySelector('.award-event');
+        const year = row.querySelector('.award-year');
+
+        if (rank) {
+          rank.style.transform = `scale(${1 + 0.04 * lift})`;
+          rank.style.color = `rgb(${Math.round(28 - 28 * lift)}, ${Math.round(28 - 28 * lift)}, ${Math.round(30 - 30 * lift)})`;
+        }
+        if (eventEl) {
+          eventEl.style.color = `rgb(${Math.round(72 - 72 * lift)}, ${Math.round(72 - 72 * lift)}, ${Math.round(74 - 74 * lift)})`;
+        }
+        if (year) {
+          year.style.color = `rgb(${Math.round(142 - 70 * lift)}, ${Math.round(142 - 70 * lift)}, ${Math.round(147 - 73 * lift)})`;
+        }
+      }
+
+      function updateAwardsProximity() {
+        if (!mouseInside) {
+          let allResting = true;
+          rows.forEach(row => {
+            let currentLift = parseFloat(row.dataset.lift || '0');
+            if (currentLift > 0.001) {
+              currentLift += (0 - currentLift) * 0.15; // lerp back to 0
+              applyLiftStyles(row, currentLift);
+              row.dataset.lift = currentLift.toFixed(4);
+              allResting = false;
+            } else {
+              applyLiftStyles(row, 0);
+              row.dataset.lift = '0';
+            }
+          });
+
+          if (!allResting) {
+            requestAnimationFrame(updateAwardsProximity);
+          } else {
+            rafActive = false;
+          }
+          return;
+        }
+
+        rows.forEach(row => {
+          const rect = row.getBoundingClientRect();
+          const rowCenterY = rect.top + rect.height / 2;
+          const dist = Math.abs(mouseY - rowCenterY);
+          const spatialInfl = Math.max(0, 1 - dist / 120); // 120px radius
+          const targetLift = spatialInfl * spatialInfl * (3 - 2 * spatialInfl); // smoothstep smooth transition
+
+          let currentLift = parseFloat(row.dataset.lift || '0');
+          currentLift += (targetLift - currentLift) * 0.20; // lerp
+          applyLiftStyles(row, currentLift);
+          row.dataset.lift = currentLift.toFixed(4);
+        });
+
+        requestAnimationFrame(updateAwardsProximity);
+      }
+
+      awardList.addEventListener('mousemove', (e) => {
+        mouseInside = true;
+        mouseY = e.clientY;
+        if (!rafActive) {
+          rafActive = true;
+          requestAnimationFrame(updateAwardsProximity);
+        }
+      }, { passive: true });
+
+      awardList.addEventListener('mouseleave', () => {
+        mouseInside = false;
+        if (!rafActive) {
+          rafActive = true;
+          requestAnimationFrame(updateAwardsProximity);
+        }
+      });
+    }
+
+    function updateAwardsBorders() {
+      const rows = document.querySelectorAll('.award-row');
+      const viewportCenterY = window.innerHeight / 2;
+      rows.forEach(row => {
+        const rect = row.getBoundingClientRect();
+        const rowCenterY = rect.top + rect.height / 2;
+        const distToCenter = Math.abs(rowCenterY - viewportCenterY);
+        const range = window.innerHeight * 0.35;
+        const scrollInfluence = Math.max(0, 1 - distToCenter / range);
+        const lifted = scrollInfluence * scrollInfluence * (3 - 2 * scrollInfluence);
+        const opacity = 0.08 + 0.12 * lifted;
+        row.style.setProperty('--border-opacity', opacity.toFixed(3));
+      });
+    }
+
+    /* ── Hackathon slider (Antigravity-style manually-controlled slider) ── */
+    function initHackathonSlider() {
+      const sliderContainer = document.querySelector('.hackathon-slider-container');
+      if (!sliderContainer) return;
+
+      const track = document.getElementById('hackathonTrack');
+      const slides = Array.from(document.querySelectorAll('.hackathon-slide'));
+      const prevBtn = document.getElementById('hackathonPrevBtn');
+      const nextBtn = document.getElementById('hackathonNextBtn');
+      const titleEl = document.getElementById('hackathonTitle');
+      const descEl = document.getElementById('hackathonDesc');
+
+      if (!track || !slides.length) return;
+
+      // Apply each relative image path from config as a background-image using index lookup
+      slides.forEach((slide) => {
+        const index = slide.getAttribute('data-index');
+        const imgPath = hackathonImages[index];
+        const container = slide.querySelector('.hackathon-image-container');
+        if (container && imgPath) {
+          container.style.backgroundImage = `url("${imgPath}")`;
+          container.style.backgroundSize = 'cover';
+          container.style.backgroundPosition = 'center';
+        }
+      });
+
+      let currentSlideIndex = 0;
+      let currentTypewriterInterval = null;
+
+      function typeText(element, text, speed = 40) {
+        if (currentTypewriterInterval) clearInterval(currentTypewriterInterval);
+        element.textContent = '';
+        let charIndex = 0;
+
+        currentTypewriterInterval = setInterval(() => {
+          if (charIndex < text.length) {
+            element.textContent += text.charAt(charIndex);
+            charIndex++;
+          } else {
+            clearInterval(currentTypewriterInterval);
+            currentTypewriterInterval = null;
+          }
+        }, speed);
+      }
+
+      function updateActiveSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= slides.length) index = slides.length - 1;
+
+        currentSlideIndex = index;
+
+        if (prevBtn) prevBtn.disabled = (index === 0);
+        if (nextBtn) nextBtn.disabled = (index === slides.length - 1);
+
+        if (track && slides.length) {
+          const slideWidth = slides[0].getBoundingClientRect().width;
+          const gap = parseFloat(window.getComputedStyle(track).gap) || 20;
+          track.style.transform = `translateX(-${index * (slideWidth + gap)}px)`;
+        }
+
+        slides.forEach((slide, idx) => {
+          slide.classList.toggle('is-active', idx === index);
+          const textEl = slide.querySelector('.typewriter-text');
+          const cursorEl = slide.querySelector('.cursor');
+          if (textEl) textEl.textContent = '';
+          if (cursorEl) cursorEl.style.display = 'none';
+        });
+
+        const activeSlide = slides[index];
+        if (activeSlide) {
+          const title = activeSlide.getAttribute('data-title');
+          const desc = activeSlide.getAttribute('data-desc');
+          const name = activeSlide.getAttribute('data-name');
+
+          if (titleEl) titleEl.textContent = title;
+          if (descEl) descEl.textContent = desc;
+
+          const activeTextEl = activeSlide.querySelector('.typewriter-text');
+          const activeCursorEl = activeSlide.querySelector('.cursor');
+
+          if (activeCursorEl) activeCursorEl.style.display = 'inline-block';
+          if (activeTextEl && name) typeText(activeTextEl, name);
+        }
+      }
+
+      // Reset slider to slide 0 cleanly (used by auto-advance on re-entry)
+      function resetSlider() {
+        if (currentTypewriterInterval) {
+          clearInterval(currentTypewriterInterval);
+          currentTypewriterInterval = null;
+        }
+        slides.forEach(slide => {
+          const textEl = slide.querySelector('.typewriter-text');
+          const cursorEl = slide.querySelector('.cursor');
+          if (textEl) textEl.textContent = '';
+          if (cursorEl) cursorEl.style.display = 'none';
+          slide.classList.remove('is-active');
+        });
+        if (track) track.style.transform = 'translateX(0)';
+        currentSlideIndex = 0;
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = false;
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          if (currentSlideIndex > 0) {
+            updateActiveSlide(currentSlideIndex - 1);
+          }
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          if (currentSlideIndex < slides.length - 1) {
+            updateActiveSlide(currentSlideIndex + 1);
+          }
+        });
+      }
+
+      slides.forEach((slide, index) => {
+        slide.addEventListener('click', () => {
+          if (index !== currentSlideIndex) {
+            updateActiveSlide(index);
+          }
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        if (track && slides.length) {
+          const slideWidth = slides[0].getBoundingClientRect().width;
+          const gap = parseFloat(window.getComputedStyle(track).gap) || 20;
+          track.style.transform = `translateX(-${currentSlideIndex * (slideWidth + gap)}px)`;
+        }
+      });
+
+      const hackathonSection = document.getElementById('hackathon-wins');
+      if (hackathonSection) {
+        let autoAdvanceTriggered = false;
+
+        const hackathonObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !autoAdvanceTriggered) {
+              autoAdvanceTriggered = true;
+              resetSlider();
+              updateActiveSlide(0);
+              setTimeout(() => {
+                if (currentSlideIndex < slides.length - 1) {
+                  updateActiveSlide(currentSlideIndex + 1);
+                }
+              }, 2000);
+            } else if (!entry.isIntersecting) {
+              autoAdvanceTriggered = false;
+              resetSlider();
+            }
+          });
+        }, { threshold: 0.4 });
+
+        hackathonObserver.observe(hackathonSection);
+      }
+      updateActiveSlide(0);
+    }
+
+
+
+    function initProjectCardTilt() {
+      if (reduceMotion) return;
+      const cards = document.querySelectorAll('.project-card');
+
+      cards.forEach((card) => {
+        let rafId = null;
+        let mouseInside = false;
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        let targetLift = 0;
+        let currentLift = 0;
+
+        const MAX_TILT = 5; // max rotation degrees
+        const LIFT_Y = -6;  // lift amount in px
+
+        function updateCardTransform() {
+          // Linear interpolation (lerp) for smooth motion
+          currentX += (targetX - currentX) * 0.15;
+          currentY += (targetY - currentY) * 0.15;
+          currentLift += (targetLift - currentLift) * 0.15;
+
+          card.style.transform = `translateY(${currentLift.toFixed(2)}px) perspective(800px) rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg)`;
+
+          const settled = Math.abs(targetX - currentX) < 0.01 &&
+            Math.abs(targetY - currentY) < 0.01 &&
+            Math.abs(targetLift - currentLift) < 0.01;
+
+          if (mouseInside || !settled) {
+            rafId = requestAnimationFrame(updateCardTransform);
+          } else {
+            card.style.transform = '';
+            rafId = null;
+          }
+        }
+
+        card.addEventListener('mousemove', (e) => {
+          mouseInside = true;
+          targetLift = LIFT_Y;
+
+          const rect = card.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const mouseX = e.clientX - centerX;
+          const mouseY = e.clientY - centerY;
+
+          // rotateX is driven by mouseY (up/down), rotateY is driven by mouseX (left/right)
+          targetY = (mouseX / (rect.width / 2)) * MAX_TILT;
+          targetX = -(mouseY / (rect.height / 2)) * MAX_TILT;
+
+          if (!rafId) {
+            rafId = requestAnimationFrame(updateCardTransform);
+          }
+        });
+
+        card.addEventListener('mouseleave', () => {
+          mouseInside = false;
+          targetX = 0;
+          targetY = 0;
+          targetLift = 0;
+
+          if (!rafId) {
+            rafId = requestAnimationFrame(updateCardTransform);
+          }
+        });
+      });
+    }
+
+    function initBadgeShimmer() {
+      const badges = document.querySelectorAll('.award-badge');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('shimmer-play');
+            observer.unobserve(entry.target); // fire only once per page load
+          }
+        });
+      }, { threshold: 0.5 });
+
+      badges.forEach((badge) => observer.observe(badge));
+    }
+
+
+
+    function initVideoModal() {
+      const modal = document.getElementById('videoModal');
+      const closeBtn = document.getElementById('videoModalClose');
+      const backdrop = document.getElementById('videoModalBackdrop');
+      const iframe = document.getElementById('videoPlayer');
+      const demoBtns = document.querySelectorAll('.btn-project-demo');
+      let triggerBtn = null;
+
+      if (!modal || !closeBtn || !backdrop || !iframe) return;
+
+      function openModal(videoId, trigger) {
+        triggerBtn = trigger;
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        modal.style.display = 'grid';
+
+        // Force reflow
+        void modal.offsetWidth;
+        modal.classList.add('is-active');
+        modal.setAttribute('aria-hidden', 'false');
+
+        // Focus close button first
+        closeBtn.focus();
+
+        // Trap focus handler
+        document.addEventListener('keydown', trapFocus);
+      }
+
+      function closeModal() {
+        modal.classList.remove('is-active');
+        modal.setAttribute('aria-hidden', 'true');
+        iframe.src = ''; // stop audio instantly
+
+        // Stop focus trapping
+        document.removeEventListener('keydown', trapFocus);
+
+        // Wait for CSS transition to finish before hiding display
+        modal.addEventListener('transitionend', function handler(e) {
+          if (e.propertyName === 'opacity') {
+            modal.style.display = 'none';
+            modal.removeEventListener('transitionend', handler);
+          }
+        });
+
+        // Restore focus
+        if (triggerBtn) {
+          triggerBtn.focus();
+        }
+      }
+
+      function trapFocus(e) {
+        if (e.key === 'Tab') {
+          const focusables = Array.from(modal.querySelectorAll('button, iframe'));
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              last.focus();
+              e.preventDefault();
+            }
+          } else {
+            if (document.activeElement === last) {
+              first.focus();
+              e.preventDefault();
+            }
+          }
+        } else if (e.key === 'Escape') {
+          closeModal();
+        }
+      }
+
+      demoBtns.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          const videoId = btn.getAttribute('data-video-id');
+          if (videoId) {
+            openModal(videoId, btn);
+          }
+        });
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      backdrop.addEventListener('click', closeModal);
+    }
+    function initHeroScrollBtn() {
+      const btn = document.getElementById('heroScrollBtn');
+      const aboutEl = document.getElementById('about');
+      if (!btn || !aboutEl) return;
+
+      // Show button after hero loads
+      setTimeout(() => btn.classList.add('is-visible'), 1500);
+
+      // Hide once user scrolls past hero
+      scrollContainer.addEventListener('scroll', () => {
+        const heroSection = document.getElementById('hero');
+        if (!heroSection) return;
+        const pastHero = scrollContainer.scrollTop > heroSection.offsetHeight * 0.4;
+        btn.classList.toggle('is-hidden', pastHero);
+      }, { passive: true });
+
+      btn.addEventListener('click', () => {
+        scrollContainerTo(aboutEl.offsetTop);
+      });
+    }
+    function initContactDots() {
+      const canvas = document.getElementById('contactDotsCanvas');
+      const contactSection = document.getElementById('contact');
+      if (!canvas || !contactSection) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let W = canvas.width = contactSection.offsetWidth;
+      let H = canvas.height = contactSection.offsetHeight;
+
+      const numPoints = 650;
+      const ambientRatio = 0.18; // ~18% of dots stay scattered, never join the letterform
+      const particles = [];
+      let isHovered = false;
+      let transitionProgress = 0; // 0 = scattered, 1 = YV monogram
+      let rafId = null;
+
+      let yvTargets = [];
+
+      function resize() {
+        W = canvas.width = contactSection.offsetWidth;
+        H = canvas.height = contactSection.offsetHeight;
+
+        particles.forEach(p => {
+          p.scatteredX = Math.random() * W;
+          p.scatteredY = Math.random() * H;
+        });
+
+        yvTargets = generateYVPoints(W, H, numPoints);
+      }
+
+      function generateYVPoints(width, height, numPoints) {
+        const offscreen = document.createElement('canvas');
+
+        // Scale down the offscreen canvas resolution to keep pixel scanning fast
+        const maxDim = 300;
+        const scaleFactor = Math.min(1.0, maxDim / Math.max(width, height));
+        const ow = Math.round(width * scaleFactor);
+        const oh = Math.round(height * scaleFactor);
+
+        offscreen.width = ow;
+        offscreen.height = oh;
+        const octx = offscreen.getContext('2d');
+        if (!octx) return [];
+
+        octx.fillStyle = '#000000';
+        octx.fillRect(0, 0, ow, oh);
+
+        octx.fillStyle = '#ffffff';
+        octx.textAlign = 'center';
+        octx.textBaseline = 'middle';
+
+        let fontSize = Math.min(ow, oh) * 0.99;
+        octx.font = `bold ${fontSize}px "Inter", sans-serif`;
+
+        let textWidth = octx.measureText('YV').width;
+        const maxWidth = ow * 0.8;
+        if (textWidth > maxWidth) {
+          fontSize *= maxWidth / textWidth;
+          octx.font = `bold ${fontSize}px "Inter", sans-serif`;
+        }
+
+        octx.fillText('YV', ow / 2, oh / 2 + (fontSize * 0.05));
+
+        const imgData = octx.getImageData(0, 0, ow, oh);
+        const data = imgData.data;
+        const rawPoints = [];
+
+        // Scan pixels
+        for (let y = 0; y < oh; y += 2) {
+          for (let x = 0; x < ow; x += 2) {
+            const idx = (y * ow + x) * 4;
+            if (data[idx] > 128) {
+              rawPoints.push({ x: x / ow, y: y / oh });
+            }
+          }
+        }
+
+        const sampled = [];
+        if (rawPoints.length > 0) {
+          for (let i = 0; i < numPoints; i++) {
+            const p = rawPoints[Math.floor((i / numPoints) * rawPoints.length)];
+            // No jitter — points land exactly on the sampled letterform pixels,
+            // keeping the YV shape crisp instead of slightly fuzzy/distorted.
+            sampled.push({ x: p.x, y: p.y });
+          }
+        }
+
+        // Map normalized coordinates to actual section size (width/height)
+        return sampled.map(p => ({
+          x: p.x * width,
+          y: p.y * height
+        }));
+      }
+
+      yvTargets = generateYVPoints(W, H, numPoints);
+      for (let i = 0; i < numPoints; i++) {
+        particles.push({
+          scatteredX: Math.random() * W,
+          scatteredY: Math.random() * H,
+          size: 1.5 + Math.random() * 2,
+          alpha: 0.2 + Math.random() * 0.6,
+          // Ambient particles never animate toward the YV shape — they stay
+          // scattered in the background even when the letterform is fully formed.
+          isAmbient: Math.random() < ambientRatio
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        const targetProgress = isHovered ? 1.0 : 0.0;
+        transitionProgress += (targetProgress - transitionProgress) * 0.08;
+
+        ctx.fillStyle = '#0a84ff';
+        particles.forEach((p, idx) => {
+          if (p.isAmbient) {
+            // Stay put at the scattered position; dim slightly while the
+            // YV is formed so the letterform stays the visual focus.
+            ctx.globalAlpha = p.alpha * (1 - transitionProgress * 0.5);
+            ctx.beginPath();
+            ctx.arc(p.scatteredX, p.scatteredY, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            return;
+          }
+
+          const target = yvTargets[idx] || { x: W / 2, y: H / 2 };
+          const curX = p.scatteredX + (target.x - p.scatteredX) * transitionProgress;
+          const curY = p.scatteredY + (target.y - p.scatteredY) * transitionProgress;
+
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(curX, curY, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+
+        const settled = Math.abs(targetProgress - transitionProgress) < 0.001;
+        if (!settled) {
+          rafId = requestAnimationFrame(draw);
+        } else {
+          rafId = null;
+        }
+      }
+
+      const interactiveElements = [
+        contactSection.querySelector('.section-title'),
+        contactSection.querySelector('.section-eyebrow'),
+        contactSection.querySelector('.contact-copy'),
+        ...contactSection.querySelectorAll('.contact-item'),
+        contactSection.querySelector('.footer')
+      ].filter(Boolean);
+
+      let hoverTimeout = null;
+
+      function startTransition(hoverState) {
+        if (isHovered === hoverState) return;
+        isHovered = hoverState;
+        if (!rafId) {
+          rafId = requestAnimationFrame(draw);
+        }
+      }
+
+      interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          if (hoverTimeout) clearTimeout(hoverTimeout);
+          startTransition(true);
+        });
+        el.addEventListener('mouseleave', () => {
+          if (hoverTimeout) clearTimeout(hoverTimeout);
+          hoverTimeout = setTimeout(() => {
+            const anyHovered = interactiveElements.some(item => item.matches(':hover'));
+            if (!anyHovered) {
+              startTransition(false);
+            }
+          }, 50);
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        resize();
+        if (!rafId) {
+          rafId = requestAnimationFrame(draw);
+        }
+      });
+
+      draw();
+    }
+
+
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', () => {
+        updateActiveSection();
+        updateAwardsBorders();
+      }, { passive: true });
+    } else {
+      window.addEventListener('scroll', () => {
+        updateActiveSection();
+        updateAwardsBorders();
+      }, { passive: true });
+    }
+    window.addEventListener('load', () => {
+      // start animated background
+      try { initBackground(); } catch (e) { /* noop */ }
+      initPageLoadSequence();
+      mountRevealObserver();
+      initAboutScrub();
+      initExperienceTimeline();
+      initAwardsProximity();
+      updateAwardsBorders();
+      initHackathonSlider();
+      initVideoModal();
+      initContactDots();
+      initProjectCardTilt();
+      initBadgeShimmer();
+      initProjectRailDrag();
+      initMobileMenu();
+      initChat();
+      updateActiveSection();
+      initHeroScrollBtn();
+      // slight delay before hiding drag hint
+      setTimeout(() => {
+        dragHint.classList.add('is-hidden');
+      }, 3000);
+    });
+  </script>
+  <div class="video-modal" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Demo Video">
+    <div class="video-modal-backdrop" id="videoModalBackdrop"></div>
+    <div class="video-modal-content panel">
+      <button class="video-modal-close" id="videoModalClose" aria-label="Close video modal">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="video-iframe-container">
+        <iframe id="videoPlayer" src="" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
